@@ -1,0 +1,51 @@
+from .core import (
+    AchievementFitCalculator,
+    BioGuard,
+    BreakthroughGuide,
+    CognitiveEvolutionAnalyzer,
+    FlowIndexCalculator,
+    FlowState,
+    FlowQuality,
+    FlowQualityAnalyzer,
+    FlowSegmenter,
+    FlowSignal,
+    FlowTimeFactor,
+    GoalManager,
+    Goal,
+    NavigationCalculator,
+    PowerCalculator,
+    ReportGenerator,
+    SessionFilter,
+    StrategicIndexCalculator,
+    TypeMatcher,
+    calculate_ewci,
+    calculate_closure_completeness,
+)
+
+__version__ = "7.3.0"
+__author__ = "Flow Ecosystem Team"
+__description__ = "A personal evolution system that quantifies and optimizes human-AI symbiotic workflows"
+
+__all__ = [
+    'AchievementFitCalculator',
+    'BioGuard',
+    'BreakthroughGuide',
+    'CognitiveEvolutionAnalyzer',
+    'FlowIndexCalculator',
+    'FlowState',
+    'FlowQuality',
+    'FlowQualityAnalyzer',
+    'FlowSegmenter',
+    'FlowSignal',
+    'FlowTimeFactor',
+    'GoalManager',
+    'Goal',
+    'NavigationCalculator',
+    'PowerCalculator',
+    'ReportGenerator',
+    'SessionFilter',
+    'StrategicIndexCalculator',
+    'TypeMatcher',
+    'calculate_ewci',
+    'calculate_closure_completeness',
+]

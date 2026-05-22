@@ -1,0 +1,1 @@
+{"name": "@user/flow-style-plugin", "version": "1.0.0", "type": "module", "main": "dist/index.js", "files": ["dist", "openclaw.plugin.json"], "dependencies": {"sqlite3": "^6.0.1"}, "openclaw": {"extensions": ["./dist/index.js"]}}

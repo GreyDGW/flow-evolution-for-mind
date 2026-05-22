@@ -1,0 +1,237 @@
+#!/usr/bin/env python3
+"""
+Flow Skill 主入口 —— 增量导入 + 日期计算 + 查库 + 生成报告
+
+路径解耦设计：
+1. 优先从环境变量 FLOW_EVOLUTION_DIR 读取核心层路径
+2. 如果没设置，自动搜索常见安装路径
+3. 还是没找到，报错并提示用户设置环境变量
+
+接收 OpenClaw LLM 提取的参数：
+  --intent-type mirror/tool_recommend/unblock
+  --time-keyword today/yesterday/week/date/last_N
+  --date-value 2026-04-19（当 time-keyword=date 时）
+  --limit 5（当 time-keyword=last_N 时）
+  --update-style (flag) Style Scanner: 分析最近5轮并更新调音
+  --agent techboss (str) Agent ID
+
+输出：Markdown 报告到 stdout
+"""
+
+import sys
+import os
+import argparse
+from datetime import datetime, timedelta
+
+# ============================================
+# 1. 路径解耦：发现核心层
+# ============================================
+def find_core_dir():
+    """三层查找：环境变量 → 自动发现 → 报错"""
+    
+    # 第一层：环境变量
+    core_dir = os.getenv("FLOW_EVOLUTION_DIR")
+    if core_dir and os.path.exists(os.path.join(core_dir, "data", "flow_ecosystem.db")):
+        return core_dir
+    
+    # 第二层：自动发现常见路径
+    candidates = [
+        os.path.expanduser("~/flow-evolution-for-mind"),   # 标准安装路径（GitHub clone）
+        os.path.expanduser("~/.flow-evolution-for-mind"), # 隐藏目录
+        os.path.expanduser("~/Desktop/skill相关文档/openclaw_flow_plugin"),  # 开发路径
+    ]
+    for c in candidates:
+        if os.path.exists(os.path.join(c, "data", "flow_ecosystem.db")):
+            return c
+    
+    # 第三层：报错
+    print("❌ 找不到 Flow Evolution 核心层", file=sys.stderr)
+    print("请确认以下之一：", file=sys.stderr)
+    print("  1. 核心层安装在标准路径 ~/flow-evolution-for-mind/", file=sys.stderr)
+    print("  2. 设置环境变量：export FLOW_EVOLUTION_DIR=/path/to/core", file=sys.stderr)
+    sys.exit(1)
+
+CORE_DIR = find_core_dir()
+sys.path.insert(0, CORE_DIR)
+os.chdir(CORE_DIR)
+
+from importer import incremental
+from plugin.report_assembler import ReportAssembler
+
+
+def parse_time_range(time_keyword: str, date_value: str = None, limit: int = None):
+    """把 LLM 提取的时间关键词转成具体的时间戳字符串"""
+    now = datetime.now()
+    today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    if time_keyword == "week":
+        weekday = today.weekday()
+        start = today - timedelta(days=weekday)
+        end = now
+    elif time_keyword == "yesterday":
+        start = today - timedelta(days=1)
+        end = today
+    elif time_keyword == "today":
+        start = today
+        end = now
+    elif time_keyword == "date" and date_value:
+        start = datetime.strptime(date_value, "%Y-%m-%d")
+        end = start + timedelta(days=1)
+    elif time_keyword.startswith("last_") and limit:
+        start = today - timedelta(days=7)
+        end = now
+    else:
+        start = today
+        end = now
+    
+    return start.strftime("%Y-%m-%d %H:%M:%S"), end.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def update_style(agent_id: str, turn_count: int = 0):
+    """Style Scanner -- V7.8-9 per-turn trigger."""
+    import sqlite3, json
+    from plugin.llm_client import LLMClientFactory
+    from datetime import datetime, timedelta
+
+    db_path = os.path.join(CORE_DIR, "data", "flow_ecosystem.db")
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+
+    # 1. Recent 5 user messages
+    c.execute("SELECT content_text FROM sessions WHERE role='user' AND session_id LIKE ? ORDER BY timestamp DESC LIMIT 5", (f'{agent_id}%',))
+    last5 = [r[0] for r in c.fetchall()][::-1]
+
+    # 2. Current Style (4D, backward compatible)
+    c.execute("SELECT value FROM kv_store WHERE agent_id=? AND key='current_style'", (agent_id,))
+    row = c.fetchone()
+    current_style = json.loads(row[0]) if row else {"pace":"explore","depth":"surface","tone":"neutral","friction":"direct"}
+    if "friction" not in current_style: current_style["friction"] = "direct"
+
+    # 3. Three-layer baseline query
+    c.execute("SELECT portrait_label,style_pace,style_depth,style_tone,style_friction,rule_insight FROM session_analyses WHERE session_id LIKE ? ORDER BY created_at DESC LIMIT 5", (f'{agent_id}%',))
+    recent = c.fetchall()
+    today = datetime.now().strftime("%Y-%m-%d")
+    c.execute("SELECT portrait_label,COUNT(*) FROM session_analyses WHERE session_id LIKE ? AND created_at LIKE ? GROUP BY portrait_label", (f'{agent_id}%',f'{today}%'))
+    today_dist = c.fetchall()
+    week_ago = (datetime.now()-timedelta(days=7)).strftime("%Y-%m-%d")
+    c.execute("SELECT portrait_label,COUNT(*) FROM session_analyses WHERE session_id LIKE ? AND created_at>=? GROUP BY portrait_label", (f'{agent_id}%',week_ago))
+    week_dist = c.fetchall()
+    conn.close()
+
+    # Friction legal domain mapping
+    friction_map = {
+        "卡壳 burnout":["direct"],"能量耗尽":["direct"],"产出饱和":["direct"],
+        "迷失探索":["socratic","direct"],"目标漂移":["socratic","direct"],
+        "执行卡壳":["direct"],"心流不稳":["socratic","direct"],
+        "舒适区运转":["socratic","direct"],"四维协同":["direct","socratic","dynamic"],
+        "高产出模式":["direct"],"认知突破":["direct"],
+        "平稳推进":["socratic","direct"],"平淡期":["socratic","direct"]
+    }
+
+    # 4. Cold start: first 3 turns free judgment
+    if turn_count <= 3:
+        baseline = None; allowed = ["direct","socratic","dynamic"]
+    else:
+        if recent:
+            label,pace,depth,tone,friction,insight = recent[0]
+            allowed = friction_map.get(label,["socratic","direct"])
+            baseline = {
+                "label":label,
+                "4d_base":{"pace":pace or "explore","depth":depth or "surface","tone":tone or "neutral","friction":friction or "direct"},
+                "friction_allowed":allowed,"rule_insight":insight or ""
+            }
+        else:
+            baseline = None; allowed = ["direct","socratic","dynamic"]
+
+    # 5. Assemble Scanner Prompt
+    bt = f"[Baseline] Main: {baseline['label']} ({baseline['4d_base']['pace']}/{baseline['4d_base']['depth']}/{baseline['4d_base']['tone']}/{baseline['4d_base']['friction']}) | Friction allowed: {','.join(baseline['friction_allowed'])} | Insight: {baseline['rule_insight']}" if baseline else "[Cold start] No baseline for first 3 turns."
+
+    prompt = f"You are state sensor. {bt} | Current: {current_style['pace']}/{current_style['depth']}/{current_style['tone']}/{current_style['friction']} | Turn: #{turn_count} | Recent: {'|'.join(last5[:3])} | Analyze: 1.Energy shift? 2.Deviation from 4D baseline (0.0-1.0)? 3.Choose friction within legal domain. 4.BLEND_RATIO (0.0-1.0). | Output: ACTION:KEEP|UPDATE STYLE:pace=xxx,depth=xxx,tone=xxx,friction=xxx DEVIATION:0.0-1.0 BLEND_RATIO:0.0-1.0 REASON:10chars | Rules: DEVIATION<0.4->KEEP; 0.4-0.7->WATCH; >=0.7->UPDATE; friction must be in legal domain; cold start free judgment."
+
+    # 6. Call LLM
+    client = LLMClientFactory.create()
+    resp = client.chat(prompt, max_tokens=400)
+    if not resp: print("LLM failed",file=sys.stderr); return
+
+    # 7. Parse + local filtering
+    try:
+        res = {}
+        for line in resp.strip().split('\n'):
+            if ':' in line: k,v=line.split(':',1); res[k.strip().lower()]=v.strip()
+        action=res.get('action','KEEP').upper()
+        dev=float(res.get('deviation','0.0'))
+        blend=float(res.get('blend_ratio','0.7'))
+
+        if action=='KEEP' or dev<0.4: print(f"KEEP(dev={dev})",file=sys.stderr); return
+        if dev<0.7: print(f"WATCH(dev={dev})",file=sys.stderr); return
+
+        style_line=res.get('style','')
+        new_style={}
+        for p in style_line.split(','):
+            if '=' in p: k,v=p.split('=',1); new_style[k.strip()]=v.strip()
+        for k in ['pace','depth','tone','friction']: new_style.setdefault(k,current_style[k])
+
+        # Conflict interception
+        if new_style['friction'] not in allowed:
+            old=new_style['friction']; new_style['friction']=allowed[0]
+            print(f"Intercept: {old}->{allowed[0]}",file=sys.stderr)
+
+        # 8. Update kv_store
+        conn=sqlite3.connect(db_path); c=conn.cursor()
+        c.execute("INSERT OR REPLACE INTO kv_store(agent_id,key,value,updated_at)VALUES(?,'current_style',?,datetime('now'))",(agent_id,json.dumps(new_style)))
+        conn.commit(); conn.close()
+        print(f"Updated: {new_style} (dev={dev},blend={blend})",file=sys.stderr)
+    except Exception as e:
+        print(f"Parse failed: {e}\n Response: {resp[:200]}",file=sys.stderr)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Flow 认知镜像 Skill")
+    parser.add_argument("--intent-type", default="mirror")
+    parser.add_argument("--time-keyword", default="today")
+    parser.add_argument("--date-value", default=None)
+    parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--update-style", action="store_true", help="Style Scanner: 分析最近5轮并更新调音")
+    parser.add_argument("--agent", type=str, default="techboss", help="Agent ID")
+    parser.add_argument("--turn-count", type=int, default=0, help="Current turn count")
+    args = parser.parse_args()
+    
+    # Style Scanner 分支
+    if args.update_style:
+        update_style(args.agent, args.turn_count)
+        sys.exit(0)
+    
+    # 增量导入
+    print(f"🔄 正在同步数据（核心层: {CORE_DIR}）...", file=sys.stderr)
+    try:
+        imported = incremental.run_once(
+            jsonl_dir="~/.openclaw/agents",
+            db_path="data/flow_ecosystem.db"
+        )
+        print(f"✅ 同步完成，新增 {imported} 条消息", file=sys.stderr)
+    except Exception as e:
+        print(f"⚠️ 同步数据时出错: {e}", file=sys.stderr)
+    
+    # 日期计算
+    start_str, end_str = parse_time_range(args.time_keyword, args.date_value, args.limit)
+    print(f"📅 时间范围: {start_str} ~ {end_str}", file=sys.stderr)
+    
+    # 生成报告
+    print("📊 正在生成报告...", file=sys.stderr)
+    try:
+        assembler = ReportAssembler(db="data/flow_ecosystem.db")
+        report = assembler.generate_flow_report(
+            session_limit=50,
+            trend_limit=30,
+            start=start_str,
+            end=end_str
+        )
+    except Exception as e:
+        print(f"❌ 生成报告失败: {e}", file=sys.stderr)
+        report = f"生成报告时出错: {e}"
+    
+    print(report)
+
+
+if __name__ == "__main__":
+    main()

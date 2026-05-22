@@ -1,0 +1,54 @@
+import path from 'path';
+import fs from 'fs';
+import sqlite3 from 'sqlite3';
+
+function getDbPath() {
+  if (process.env.FLOW_EVOLUTION_DIR) {
+    return path.join(process.env.FLOW_EVOLUTION_DIR, 'data', 'flow_ecosystem.db');
+  }
+  const markerFile = path.join(process.env.HOME, '.flow_evolution_dir');
+  if (fs.existsSync(markerFile)) {
+    const dir = fs.readFileSync(markerFile, 'utf8').trim();
+    return path.join(dir, 'data', 'flow_ecosystem.db');
+  }
+  return path.join(process.env.HOME, 'Desktop', 'skill相关文档', 'openclaw_flow_plugin', 'data', 'flow_ecosystem.db');
+}
+
+export function registerInjectorHook(api) {
+  api.on("before_prompt_build", async (event, ctx) => {
+    const agentId = ctx.agentId || 'techboss';
+    const dbPath = getDbPath();
+    
+    return new Promise((resolve) => {
+      try {
+        const db = new sqlite3.Database(dbPath);
+        
+        db.get(`
+          SELECT value FROM kv_store
+          WHERE agent_id = ? AND key = 'current_style'
+        `, [agentId], (err, row) => {
+          db.close();
+          
+          if (err || !row || !row.value) {
+            api.logger.debug(`[flow-style] No style for ${agentId}`);
+            resolve(null);
+            return;
+          }
+          
+          try {
+            const style = JSON.parse(row.value);
+            const styleLine = `[Flow-Style: pace=${style.pace}, depth=${style.depth}, tone=${style.tone}]`;
+            api.logger.info(`[flow-style] Injecting: ${styleLine}`);
+            resolve({ appendSystemContext: styleLine });
+          } catch (e) {
+            api.logger.error(`[flow-style] Parse error: ${e.message}`);
+            resolve(null);
+          }
+        });
+      } catch (e) {
+        api.logger.error(`[flow-style] Injector fatal: ${e.message}`);
+        resolve(null);
+      }
+    });
+  });
+}

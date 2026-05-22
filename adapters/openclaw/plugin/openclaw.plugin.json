@@ -1,0 +1,1 @@
+{"id": "flow-style-plugin", "name": "Flow Style Tuner", "description": "Cognitive style monitoring and injection for Flow Evolution", "kind": "utility", "configSchema": {"type": "object", "properties": {"dbPath": {"type": "string", "description": "SQLite database path"}}}}

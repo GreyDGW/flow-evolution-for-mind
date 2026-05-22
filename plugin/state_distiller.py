@@ -1,0 +1,127 @@
+"""
+StateDistiller：4维 → Portrait + Style (4D)
+14条优先级扫描规则 + friction 维度
+"""
+from dataclasses import dataclass
+
+@dataclass
+class Portrait:
+    label: str
+    description: str
+    suggestion: str
+    rule_insight: str
+    style_pace: str
+    style_depth: str
+    style_tone: str
+    style_friction: str
+
+@dataclass
+class StyleParams:
+    pace: str
+    depth: str
+    tone: str
+    friction: str
+
+StatePortrait = Portrait
+
+class StateDistiller:
+    RULES = [
+        {'priority': 1, 'label': '卡壳 burnout',
+         'condition': lambda g,c,f,cg: g=='高' and c=='低' and f=='低' and cg=='低',
+         'description': '方向清晰但全面崩盘，身心俱疲',
+         'suggestion': '立刻暂停，做5分钟身体扫描，今天不产出也没关系',
+         'rule_insight': '目标感高说明方向正确，但闭环、心流、认知全崩，意味着执行系统已超载',
+         'style': {'pace': 'hold', 'depth': 'surface', 'tone': 'soft', 'friction': 'direct'}},
+        {'priority': 2, 'label': '能量耗尽',
+         'condition': lambda g,c,f,cg: sum([x=='低' for x in [g,c,f,cg]]) >= 3,
+         'description': '全面低迷，需要充电',
+         'suggestion': '切换到输入模式，看一篇轻松文章或散步，不强迫自己产出',
+         'rule_insight': '三维以上同时低迷，通常是睡眠、营养或情绪基线问题',
+         'style': {'pace': 'hold', 'depth': 'surface', 'tone': 'soft', 'friction': 'direct'}},
+        {'priority': 3, 'label': '产出饱和',
+         'condition': lambda g,c,f,cg: g=='高' and c=='高' and f=='低' and cg=='低',
+         'description': '高效执行但无成长，在舒适区打转',
+         'suggestion': '完成当前任务后，花15分钟探索一个相关新领域，打破熟练循环',
+         'rule_insight': '目标对齐和闭环都高说明执行力强，但心流和认知低意味着任务难度低于当前能力',
+         'style': {'pace': 'hold', 'depth': 'surface', 'tone': 'soft', 'friction': 'direct'}},
+        {'priority': 4, 'label': '迷失探索',
+         'condition': lambda g,c,f,cg: g=='低' and c=='低' and f in ['中','高'] and cg in ['中','高'],
+         'description': '在未知领域漫游，无明确产出',
+         'suggestion': '给自己设一个30分钟探索闹钟，到时必须选一个方向落地',
+         'rule_insight': '心流和认知高说明大脑活跃，但目标感和闭环低意味着缺乏收敛机制',
+         'style': {'pace': 'explore', 'depth': 'surface', 'tone': 'soft', 'friction': 'socratic'}},
+        {'priority': 5, 'label': '目标漂移',
+         'condition': lambda g,c,f,cg: g=='低' and c in ['高','中'],
+         'description': '执行能力强但方向错了，最具欺骗性',
+         'suggestion': '暂停执行，花10分钟重新确认核心目标，问自己"这件事3天后还重要吗"',
+         'rule_insight': '闭环高说明执行力没问题，但目标感低意味着在错误方向上高效前进',
+         'style': {'pace': 'anchor', 'depth': 'surface', 'tone': 'soft', 'friction': 'socratic'}},
+        {'priority': 6, 'label': '执行卡壳',
+         'condition': lambda g,c,f,cg: g=='高' and c in ['低','中'],
+         'description': '方向极准，但落地薄弱',
+         'suggestion': '建议收敛到一个可交付点，哪怕只是草稿或TODO清单，先完成再完美',
+         'rule_insight': '目标感高但闭环低/中，说明方向正确但执行受阻，需要降低交付门槛',
+         'style': {'pace': 'converge', 'depth': 'deep', 'tone': 'neutral', 'friction': 'direct'}},
+        {'priority': 7, 'label': '心流不稳',
+         'condition': lambda g,c,f,cg: f in ['低','中'] and cg=='高',
+         'description': '认知在突破，但专注断断续续',
+         'suggestion': '减少外部干扰源，关闭通知，用番茄钟强制保护心流窗口',
+         'rule_insight': '认知高但心流低/中，说明大脑在努力理解新概念，但频繁被打断',
+         'style': {'pace': 'explore', 'depth': 'surface', 'tone': 'neutral', 'friction': 'socratic'}},
+        {'priority': 8, 'label': '舒适区运转',
+         'condition': lambda g,c,f,cg: c in ['高','中'] and f in ['高','中'] and cg in ['中','低'] and not (g == c == f == cg),
+         'description': '熟练但无挑战，温水煮青蛙',
+         'suggestion': '主动增加一个难度变量，比如缩短deadline或增加一个新约束',
+         'rule_insight': '闭环和心流高但认知低，说明在舒适区高效运转，长期会导致能力停滞',
+         'style': {'pace': 'converge', 'depth': 'deep', 'tone': 'neutral', 'friction': 'direct'}},
+        {'priority': 9, 'label': '四维协同',
+         'condition': lambda g,c,f,cg: g=='高' and c=='高' and f=='高' and cg=='高',
+         'description': '状态巅峰，所有维度同步推进',
+         'suggestion': '保持节奏，但注意记录这个状态的触发条件（时间/环境/任务类型），以便复现',
+         'rule_insight': '四维全高是罕见的最优状态，通常发生在挑战与技能完美匹配时',
+         'style': {'pace': 'converge', 'depth': 'deep', 'tone': 'neutral', 'friction': 'dynamic'}},
+        {'priority': 10, 'label': '高产出模式',
+         'condition': lambda g,c,f,cg: g=='高' and c=='高' and f in ['中','高'] and cg=='中',
+         'description': '高效推进中，成长稍缓',
+         'suggestion': '当前状态很好，可在任务间隙插入一个5分钟反思：今天学到了什么新东西',
+         'rule_insight': '目标和闭环高，心流中/高，认知中，说明在高效执行期但可能忽略了深度思考',
+         'style': {'pace': 'converge', 'depth': 'deep', 'tone': 'neutral', 'friction': 'socratic'}},
+        {'priority': 11, 'label': '认知突破',
+         'condition': lambda g,c,f,cg: cg=='高' and g in ['高','中'] and c in ['中','高'] and f in ['中','高'],
+         'description': '新理解正在形成，需要落地场景',
+         'suggestion': '立刻找一个最小场景验证这个新理解，防止概念悬空，哪怕只是写一段伪代码',
+         'rule_insight': '认知高且其他维度中/高，说明正在经历概念重组或顿悟，需要及时落地防止遗忘',
+         'style': {'pace': 'explore', 'depth': 'deep', 'tone': 'neutral', 'friction': 'direct'}},
+        {'priority': 12, 'label': '平淡期',
+         'condition': lambda g,c,f,cg: c in ['高','中'] and sum([x=='低' for x in [g,f,cg]]) >= 2,
+         'description': '执行尚可但质量不佳，效率与深度脱节',
+         'suggestion': '降低任务量，聚焦核心目标，评估是否在错误赛道上',
+         'rule_insight': '闭环高/中但其他维度低，说明执行有惯性但质量和方向出了问题，需要暂停评估',
+         'style': {'pace': 'anchor', 'depth': 'surface', 'tone': 'soft', 'friction': 'socratic'}},
+        {'priority': 13, 'label': '平稳推进',
+         'condition': lambda g,c,f,cg: g == c == f == cg,
+         'description': '状态平稳，四维一致，无明显问题',
+         'suggestion': '保持当前节奏，定期复盘即可，不需要特殊干预',
+         'rule_insight': '四维完全一致，说明处于正常波动范围，系统不需要调音',
+         'style': {'pace': 'explore', 'depth': 'deep', 'tone': 'neutral', 'friction': 'socratic'}},
+        {'priority': 14, 'label': '平稳推进',
+         'condition': lambda g,c,f,cg: True,
+         'description': '状态平稳，无明显问题',
+         'suggestion': '保持当前节奏，定期复盘即可，不需要特殊干预',
+         'rule_insight': '未匹配任何特殊模式，处于正常波动范围，系统不需要调音',
+         'style': {'pace': 'explore', 'depth': 'deep', 'tone': 'neutral', 'friction': 'socratic'}}
+    ]
+
+    def distill(self, goal_alignment, closure_index, flow_depth, cognition_growth):
+        for rule in self.RULES:
+            if rule['condition'](goal_alignment, closure_index, flow_depth, cognition_growth):
+                return Portrait(
+                    label=rule['label'], description=rule['description'],
+                    suggestion=rule['suggestion'], rule_insight=rule['rule_insight'],
+                    style_pace=rule['style']['pace'], style_depth=rule['style']['depth'],
+                    style_tone=rule['style']['tone'], style_friction=rule['style']['friction'])
+        return Portrait('未知', '无法判定', '请检查输入数据', '', 'explore', 'deep', 'neutral', 'direct')
+
+    def distill_from_analysis(self, analysis):
+        return self.distill(analysis.goal_alignment, analysis.closure_index,
+                           analysis.flow_depth, analysis.cognition_growth)
