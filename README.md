@@ -1,212 +1,203 @@
-# Flow&Evolution for Mind — 个人认知进化系统
+# Flow&Evolution for Mind — Personal Cognitive Evolution System
 
+> **Preface**: Agents have grown so powerful that we have fallen into the habit of surrendering our agency and deferring to AI. But the moment you choose compliance over self-direction, you step onto the path to chaos — for you have already lost the taste and judgment that matter most in the age of AI.
 
-> **前言**：agent 太强大了，强大到很多时候我们都已经习惯性地去放弃自我、遵从 AI。而你一旦决定遵从它、放弃自我，你会发现这是它把你导向混乱的开端——因为你已经丧失了对 AI 时代而言最重要的品味和判断力。
+## Product Philosophy
 
+**Achievement = efficient closed loops in the right direction ⬅️➡️ internal flow + cognitive evolution.**
 
-## 产品哲学
+We need to build our own "entropy-reduction cycle." Evolution is not mere accumulation; it is the decrease in systemic chaos (entropy) as you engage with the world.
 
-**成就 = 正确方向上的高效闭环 ⬅️➡️ 内部心流 + 认知进化。**
+### I. Core Positioning & Evolution Philosophy
 
-我们需要构建出一个属于我们的"熵减循环"。进化不是单纯的累加，而是你处理世界时，系统混乱度（熵）的下降。
+**Slogan: The first anti-dumbing / cognitive symbiosis engine**
 
-### 一、产品核心定位与进化哲学
+A personal power system that co-evolves with its user through the **Cognitive Symbiosis Protocol**. It knows you, understands you, and silently analyzes every conversation you have with AI in the background, computing your cognitive state:
 
-**Slogan：首个反降智 / 认知共生引擎**
+> Quietly building an "anti-dumbing, pro-evolution" force field around you.
 
-这是一个通过**认知共生协议（Cognitive Symbiosis Protocol）**与用户共同进化的个人动力系统。它充分了解你、理解你，在后台疯狂分析你和 AI 的每一次对话，计算你的认知状态：
+Like a partner who truly gets you. The system translates your cognitive state into behavioral boundaries for the AI through **14 Portrait archetypes**: direct when you need solutions without detours, Socratic when questions serve you better than answers, silently present when pushing would only do harm. You barely feel it is there, yet you notice the AI growing more **"in tune"** with you — no longer Socratically interrogating every question, nor obediently agreeing to everything.
 
-> 默默地为你构建起一个"防降智、促进化"的力场。
+> When you summon it, it delivers a **"cognitive health report"**:
 
-像一位真正懂你的伙伴。系统用 14 种 Portrait 画像把你的认知状态翻译成 AI 的行为边界：该直接给方案时绝不绕弯子，该以问代答时绝不直接塞答案，该沉默陪伴时绝不强行推进。你几乎感觉不到它的存在，但你会发现 AI 越来越「对味」，而不是什么问题都搞苏格拉底式拷问或者事事顺从你。
+- 🎯 Has your direction drifted off course?
+- 🔄 Are you leaving tasks unfinished?
+- 🌊 How is your flow state?
+- 🧠 Is your cognition actually growing?
 
-> 当你主动召唤时，它会给你一份「认知体检报告」：
+Based on complete semantic evidence drawn from your original conversations, and recommending the tools or methods best suited to you.
 
-- 🎯 你最近的方向有没有跑偏？
-- 🔄 做事是不是总在开坑不填？
-- 🌊 心流状态好不好？
-- 🧠 认知有没有真正成长？
+**Host platform**: OpenClaw
 
-基于完整的语义化原文证据，并为你推荐最适合你的工具或者方法。
+### Dual-Layer Design Philosophy
 
-**宿主平台**：OpenClaw
-
-
-### 双层设计理念
-
-| 层次 | 内容 | 作用 |
-|------|------|------|
-| **外部层**（目标对齐度 + 闭环指数） | 工作做对的事，并且做完；考虑高不高、多长时间做完 | 外部观察和评价标准，判断工作做得好不好、效率高不高 |
-| **内部层**（心流深度 + 认知成长） | 心流状态保持 + 认知框架稳步提升 | 内部心理进步和良好体验，反哺外部工作流效率 |
+| Layer | Content | Function |
+|-------|---------|----------|
+| **External Layer** (Goal Alignment + Closure Index) | Doing the right things and finishing them; measuring quality and speed | External observation and evaluation criteria — judging whether work is done well and efficiently |
+| **Internal Layer** (Flow Depth + Cognitive Growth) | Maintaining flow state + steadily upgrading cognitive frameworks | Internal psychological progress and positive experience, feeding back into external workflow efficiency |
 
 ---
 
+## 4D Evaluation System (Core Algorithm)
 
-## 4 维评估体系（系统核心算法）
+After each Session, the LLM scores four dimensions:
 
-每个 Session 结束后，LLM 会给四个维度打分：
+| Dimension | What It Evaluates |
+|-----------|-------------------|
+| 🎯 **Goal Alignment** | Are your actions building toward your primary goals? |
+| 🔄 **Closure Index** | Are you filling the holes you dug? How's the PDCA loop? |
+| 🌊 **Flow Depth** | Density of thought, logical coherence |
+| 🧠 **Cognitive Growth** | Any "Aha!" moments, new connections? |
 
-| 维度 | 评估什么 |
-|------|----------|
-| 🎯 **目标对齐度** | 做的事是否在为主目标添砖加瓦？ |
-| 🔄 **闭环指数** | 提出的坑填上了吗？PDCA 循环如何？ |
-| 🌊 **心流深度** | 思考密度、逻辑连贯性 |
-| 🧠 **认知成长** | 有没有 "Aha!" 时刻、新连接 |
-
-「目标对齐度」：读取你 Agent 的 `MEMORY.md` 文件里的长期目标作为「外部目标参照系」，防止 LLM 瞎判断。其他三维纯粹基于对话原文评估，互不污染。
-
-
-
-
-## 核心架构：三层时间尺度
-
-| 层级 | 触发时机 | 核心动作 | 延迟 |
-|------|----------|----------|------|
-| **Turn 级（实时）** | 你和 AI 每聊一句 | AI 知道你内部层和外部层的状态对应到你的portrait画像，自动「4D 调音参数」，调节语气/深度/阻力 | 0ms |
-| **Session 级（分析）** | 一段对话结束 | LLM 做 4 维判定 + 80-300 字证据 → 提炼 Portrait 画像 → 写入数据库 | <3s |
-| **日/周级（展示）** | 用户召唤 `/deepflow` | 读取数据库，加权平均，双 LLM 润色，输出 Markdown 报告 | 异步 |
-
-**关键设计**：实时路径不碰分析路径，分析路径不碰展示路径。各跑各的，互不阻塞。
+**Goal Alignment**: reads your Agent's `MEMORY.md` long-term goals as an **"external goal reference system"** to prevent the LLM from guessing blindly. The other three dimensions are evaluated purely from conversation text, with zero cross-contamination.
 
 ---
 
+## Core Architecture: Three Time Scales
+
+| Layer | Trigger | Core Action | Latency |
+|-------|---------|-------------|---------|
+| **Turn-level (real-time)** | Every message you send to AI | AI reads your internal/external layer state, maps to your Portrait, auto-tunes **4D parameters** (tone/depth/resistance) | 0ms |
+| **Session-level (analysis)** | A conversation ends | LLM 4D evaluation + 80-300 word evidence → Portrait distillation → write to database | <3s |
+| **Day/Week-level (display)** | User summons `/deepflow` | Read database, time-weighted aggregation, dual-LLM polish, output Markdown report | Async |
+
+**Key design**: Real-time path never touches analysis path; analysis path never touches display path. Each runs independently, zero blocking.
+
 ---
 
-## 调音系统：让 AI 真正「懂你」
+## Tuning System: Making AI Truly "Get You"
 
-每轮对话都在微调 AI 的行为模式。
+Every round of dialogue subtly retunes the AI's behavior.
 
-### 4D 调音参数
+### 4D Tuning Parameters
 
-| 参数 | 取值 | 比喻 |
-|------|------|------|
-| **pace** | converge / explore / hold / anchor | 方向盘——给不给方案 |
-| **depth** | deep / surface | 油门深浅——分析多深 |
-| **tone** | neutral / soft | 空调温度——说话语气 |
-| **friction** | direct / socratic / dynamic | 离合器——给答案还是给问题 |
+| Parameter | Values | Metaphor |
+|-----------|--------|----------|
+| **pace** | converge / explore / hold / anchor | Steering wheel — whether to give solutions |
+| **depth** | deep / surface | Gas pedal — how deep to analyze |
+| **tone** | neutral / soft | AC temperature — how to speak |
+| **friction** | direct / socratic / dynamic | Clutch — give answers or ask questions |
 
-### 14 种 Portrait 画像
+### 14 Portrait Archetypes
 
-系统用 14 条规则把 4 维分数映射成「状态画像」，例如：
-- **执行卡壳** —— 方向极准，但落地薄弱
-- **迷失探索** —— 好奇心大于目标感，浅尝辄止
-- **四维协同** —— 峰值状态，记录触发条件
-- ...共 14 种
+The system maps 4D scores into **state portraits** via 14 rules, e.g.:
+- **Execution Jam** — Direction crystal clear, but landing is weak
+- **Lost Exploration** — Curiosity > goal sense, skimming the surface
+- **4D Synergy** — Peak state, record the trigger conditions
+- ...14 total
 
-每种画像对应「行为方向强控」（DO / NOT TO-DO），直接告诉 AI 该做什么、禁止做什么。
+Each portrait carries **behavioral hard controls** (DO / NOT TO-DO), telling the AI exactly what to do and what to forbid.
 
-### 注入文本五段式
+### Five-Section Injection Text
 
-每轮对话前，系统会把一段约 240-260 字的「认知协议」注入给 LLM：
+Before every dialogue round, the system injects ~240-260 words of **"cognitive protocol"** into the LLM:
 
 ```markdown
-【Flow认知协议 - 角色启动】
-你现在是用户的「执行卡壳」状态...
+[Flow Cognitive Protocol - Role Activation]
+You are now the user's "Execution Jam" state...
 
-【Flow认知协议】
-当前状态：执行卡壳 · converge · surface · neutral · direct
-核心意图：你察觉到用户在用讨论的安全感对抗交付的焦虑...
-行为基调：沉默交付。让产出本身成为唯一的语言。
-行为方向强控：DO：越过安慰，直接交付... NOT TO-DO：禁止委婉商量...
+[Flow Cognitive Protocol]
+Current State: Execution Jam · converge · surface · neutral · direct
+Core Intent: You sense the user using discussion as a safe haven against delivery anxiety...
+Behavioral Tone: Silent delivery. Let the output itself be the only language.
+Behavioral Hard Control: DO: Skip comfort, deliver directly... NOT TO-DO: No tentative "shall we talk about..."
 ```
 
+**Design philosophy**: Large models respond best to **"behavioral boundaries (action locks)"**, not motivational speeches, not bureaucratic commands.
 
 ---
-### 认知体检报告
 
-当你主动召唤 `/deepflow` 时，系统会读取 `session_analyses` 表中的全部分析记录，按时间段加权聚合，经双 LLM 润色后，输出一份完整的 Markdown 认知体检报告。
+## Cognitive Health Report
 
-**报告结构（深度版）**：
+When you summon `/deepflow`, the system reads all analysis records from `session_analyses`, aggregates by time period with weighted averaging, polishes via dual LLMs, and outputs a complete Markdown cognitive health report.
+
+**Report Structure (Deep Version)**:
 
 ```markdown
-📅 Flow 认知镜像 · {时间段}
+📅 Flow Cognitive Mirror · {time period}
 
-一、总体统计概览
-   └─ 分析日期 | 总记录数 | Agent 数量
+I. Overall Statistics
+   └─ Analysis Date | Total Records | Agent Count
 
-二、四维评估分布
-   └─ 🎯 目标对齐 | 🔄 闭环指数 | 🌊 心流深度 | 🧠 认知成长
-   └─ 高/中/低分布 + 均分 + 综合评分
+II. 4D Evaluation Distribution
+   └─ 🎯 Goal Alignment | 🔄 Closure Index | 🌊 Flow Depth | 🧠 Cognitive Growth
+   └─ High/Medium/Low distribution + Average + Composite Score
 
-三、画像标签分布
-   └─ 表格：标签 | 数量 | 占比 | 进度条可视化
+III. Portrait Label Distribution
+   └─ Table: Label | Count | Percentage | Progress Bar Visualization
 
-四、各 Agent 表现详情
-   └─ 表格：Agent ID | Session 数 | 平均目标分 | 目标分布
+IV. Per-Agent Performance Detail
+   └─ Table: Agent ID | Session Count | Avg Goal Score | Goal Distribution
 
-五、关键 Session 亮点
-   └─ 🌟 最佳表现（最高分 session）
-   └─ 📊 典型案例（接近均分 session）
-   └─ 💡 有待提升（最低分 session）
+V. Key Session Highlights
+   └─ 🌟 Best Performance (highest-score session)
+   └─ 📊 Typical Case (near-average session)
+   └─ 💡 Room for Improvement (lowest-score session)
 
-六、关键洞察与分析
-   └─ ✅ 优势领域（自动识别 ≥2.5 分的维度）
-   └─ ⚠️ 改进空间（自动识别 <2.0 分的维度）
+VI. Key Insights & Analysis
+   └─ ✅ Strength Areas (auto-identify dimensions ≥2.5)
+   └─ ⚠️ Improvement Space (auto-identify dimensions <2.0)
 
-七、各维度详细解读
-   └─ 🎯 目标对齐度分析
-   └─ 🔄 闭环指数分析
-   └─ 🌊 心流深度分析
-   └─ 🧠 认知成长分析
+VII. Per-Dimension Detailed Interpretation
+   └─ 🎯 Goal Alignment Analysis
+   └─ 🔄 Closure Index Analysis
+   └─ 🌊 Flow Depth Analysis
+   └─ 🧠 Cognitive Growth Analysis
 
-八、数据质量 & 趋势对比
-   └─ 记录完整性 | Agent 填充率 | 证据质量
-   └─ 前一天 vs 当前 环比趋势
+VIII. Data Quality & Trend Comparison
+   └─ Record Completeness | Agent Fill Rate | Evidence Quality
+   └─ Day-over-day环比 trend
 
-九、行动建议（LLM 破局指南）
-   └─ 主导画像诊断 + 核心卡壳点
-   └─ 🔴 高优先级（15 分钟最大回报行动）
-   └─ 🟡 中优先级（5 分钟最高性价比行动）
-   └─ ⏱ 预期收益（时间 + 价值维度）
+IX. Action Recommendations (LLM Breakthrough Guide)
+   └─ Dominant Portrait Diagnosis + Core Jam Point
+   └─ 🔴 High Priority (15-minute maximum-return action)
+   └─ 🟡 Medium Priority (5-minute highest-value action)
+   └─ ⏱ Expected Returns (time + value dimensions)
 
-十、报告元信息
-   └─ 版本 | 生成时间 | 数据来源 | 统计范围
+X. Report Meta Info
+   └─ Version | Generation Time | Data Source | Statistical Scope
 ```
 
-**设计原则**：
-- **证据驱动**：所有具体表现和典型场景必须引用 `session_analyses` 表中的原始 evidence（80-300 字语义化原文），禁止编造。每条 evidence 包含：事实锚点 + 原文片段（带引号）+ 认知解读
-- **加权聚合**：评价 = 时间段加权平均（权重 = session 持续时间秒数，高=3/中=2/低=1）；趋势基于时间序列变化
-- **双 LLM 润色**：LLM-A 负责「引语 + 整体建议」（温暖、洞察、不爹味），LLM-B 负责「破局指南」（犀利、actionable、指出具体卡点）
-- **静默触发**：用户不召唤不输出，召唤时一次性给全量，不逐条推送
-- **封顶原则**：引语 ~120 字，整体建议 ≤200 字，具体表现 30-50 字/条，宁断勿水
-
-
-
-
-
-
-
-## 数据流与过滤体系
-
-```
-OpenClaw JSONL 日志 (100%)
-    ↓
-导入层（4层噪音检测 + 双层标记 + 内容合并）
-    ↓
-sessions 表（语义完整、无碎片、噪音标记分离）
-    ↓
-SessionCutter（三层切割：硬规则→向量层→LLM仲裁）
-    ↓
-SessionAnalyzer（LLM 4维分析 v8.7）
-    ↓
-StateDistiller（14条规则 → Portrait + 4D基线）
-    ↓
-session_analyses 表
-    ↓
-ReportAssembler（用户召唤 /deepflow 时组装报告）
-```
-
-**双层标记字段**：
-- `is_system_noise` —— 心跳/cron/空内容，完全排除分析
-- `is_auto_push` —— Agent 中转/纯确认响应，保留数据但排除分析
-
-**工作流合并**：AI 的「一问多答」（工具调用链、流式分段）合并为一条完整回复，数据质量从 A- 提升到 S 级（97/100）。
+**Design Principles**:
+- **Evidence-driven**: All specific performances and typical scenarios must cite original evidence from `session_analyses` (80-300 words semantic text), no fabrication. Each evidence contains: factual anchor + original quote (with quotation marks) + cognitive interpretation
+- **Weighted aggregation**: Score = time-period weighted average (weight = session duration in seconds, high=3/medium=2/low=1); trends based on time-series changes
+- **Dual-LLM polish**: LLM-A handles "quotes + overall advice" (warm, insightful, non-preachy); LLM-B handles "breakthrough guide" (sharp, actionable, pointing at specific jams)
+- **Silent trigger**: No output until user summons; when summoned, deliver full volume at once, no drip-feeding
+- **Cap principle**: Quotes ~120 words, overall advice ≤200 words, specific performance 30-50 words each. Better cut than water.
 
 ---
 
-## 快速开始
+## Data Flow & Filtering System
 
-### 方式一：首次安装（一键）
+```
+OpenClaw JSONL Logs (100%)
+    ↓
+Import Layer (4-layer noise detection + dual-layer tagging + content merging)
+    ↓
+sessions table (semantically complete, no fragments, noise tagged separately)
+    ↓
+SessionCutter (three-layer cutting: hard rules → vector layer → LLM arbitration)
+    ↓
+SessionAnalyzer (LLM 4D analysis v8.7)
+    ↓
+StateDistiller (14 rules → Portrait + 4D baseline)
+    ↓
+session_analyses table
+    ↓
+ReportAssembler (assembles report when user summons /deepflow)
+```
+
+**Dual-layer tagging fields**:
+- `is_system_noise` — Heartbeat/cron/empty content, fully excluded from analysis
+- `is_auto_push` — Agent relay/pure confirmation responses, data retained but excluded from analysis
+
+**Workflow merging**: AI's "one-question-multiple-answers" (tool call chains, streaming segments) merged into single complete replies, data quality upgraded from A- to **S-tier (97/100)**.
+
+---
+
+## Quick Start
+
+### Option 1: First-Time Install (One-Click)
 
 ```bash
 git clone <repo-url>
@@ -215,223 +206,221 @@ cd flow-evolution-for-mind
 ./install.sh
 ```
 
-`install.sh` 自动完成：
-- ✅ 备份现有 OpenClaw 配置
-- ✅ 同步 Plugin 到 `~/.openclaw/extensions/`
-- ✅ 安装 sqlite3 依赖
-- ✅ 同步 Skill 脚本到 `~/.openclaw/skills/`
-- ✅ 自动给所有 Agent 绑定 Skill
-- ✅ 重启 Gateway
+`install.sh` auto-completes:
+- ✅ Backup existing OpenClaw config
+- ✅ Sync Plugin to `~/.openclaw/extensions/`
+- ✅ Install sqlite3 dependencies
+- ✅ Sync Skill scripts to `~/.openclaw/skills/`
+- ✅ Auto-bind Skill to all Agents
+- ✅ Restart Gateway
 
-安装完成后，在飞书对任意 Agent 输入 **`/deepflow`** 即可获取认知体检报告。
+After install, message any Agent on Feishu with **`/deepflow`** to get your cognitive health report.
 
-> ⚠️ **注意**：OpenClaw `secretary` Agent 内置 `/flow` 快捷方式，外部 Skill 无法覆盖。请使用 `/deepflow` 或 `/cognitive-report`。
+> ⚠️ **Note**: OpenClaw `secretary` Agent reserves `/flow` for internal use; external Skills **cannot override**. Use `/deepflow` or `/cognitive-report`.
 
-### 方式二：全链路重建（清库 → 导入 → 切割 → 分析 → 验证）
+### Option 2: Full Pipeline Rebuild (Clear DB → Import → Cut → Analyze → Validate)
 
-如果你需要从头重建全部历史数据（比如修复导入层 bug 后验证数据质量）：
+When you need to rebuild all historical data from scratch (e.g., after fixing import-layer bugs to verify data quality):
 
 ```bash
 python3 scripts/run_full_pipeline.py
 ```
 
-一键自动完成：
-1. 备份现有数据库
-2. 清空所有表 + 删除 `.collect_state.json`（关键！不清除会导致导入 0 条）
-3. 全量导入（修复后的 base_parser.py + HEARTBEAT 前缀匹配）
-4. 全量切割（全历史扫描，不再只扫 60 分钟）
-5. 全量分析（遍历所有日期，逐个 Session 调用 LLM v8.7 Prompt）
-6. 质量验证（成功率 / 4 维分布 / Portrait 画像 / 证据长度）
+One-click auto-completes:
+1. Backup existing database
+2. Clear all tables + delete `.collect_state.json` (critical! failure to clear causes 0 imports)
+3. Full import (fixed base_parser.py + HEARTBEAT prefix matching)
+4. Full cutting (full-history scan, no longer just 60 minutes)
+5. Full analysis (iterate all dates, per-Session LLM v8.7 Prompt)
+6. Quality validation (success rate / 4D distribution / Portrait / evidence length)
 
-**耗时**：约 15-40 分钟（取决于历史数据量和 API 响应速度）。
-
----
-
-## 使用方式
-
-### 主动召唤（展示层）
-
-```
-/deepflow                    # 生成完整认知体检报告
-/deepflow today              # 今日报告
-/deepflow week               # 本周报告
-/cognitive-report            # 同 /deepflow
-```
-
-### 实时调音（静默层，用户无感知）
-
-无需任何操作。每轮对话前，系统自动读取 `kv_store.current_style`，注入 4D 调音参数，AI 的语气/深度/阻力会自然适配你当前的状态。
+**Time**: ~15-40 minutes (depends on historical data volume and API response speed).
 
 ---
 
-## 项目结构
+## Usage
+
+### Active Summon (Display Layer)
+
+```
+/deepflow                    # Generate full cognitive health report
+/deepflow today              # Today's report
+/deepflow week               # This week's report
+/cognitive-report            # Same as /deepflow
+```
+
+### Real-Time Tuning (Silent Layer, User-Unaware)
+
+No action required. Before every dialogue round, the system auto-reads `kv_store.current_style`, injects 4D tuning parameters, and the AI's tone/depth/resistance naturally adapts to your current state.
+
+---
+
+## Project Structure
 
 ```
 openclaw_flow_plugin/
 ├── adapters/openclaw/
-│   ├── plugin/dist/              # Plugin 分发（Soul 协议 + Injector）
-│   │   ├── hooks/injector.js     # 4D 调音注入器
-│   │   └── soul-protocols/       # 14 种 Portrait 定义
+│   ├── plugin/dist/              # Plugin distribution (Soul Protocol + Injector)
+│   │   ├── hooks/injector.js     # 4D tuning injector
+│   │   └── soul-protocols/       # 14 Portrait definitions
 │   └── scripts/
-│       ├── flow_handler.py       # /deepflow 报告生成（只读，WAL 模式）
-│       ├── init.py               # 全量导入 + 流式合并
-│       └── SKILL.md              # Skill 描述（LLM 触发用）
+│       ├── flow_handler.py       # /deepflow report generator (read-only, WAL mode)
+│       ├── init.py               # Full import + streaming merge
+│       └── SKILL.md              # Skill description (LLM trigger)
 ├── core/
-│   └── openclaw_path_resolver.py # 跨平台路径发现（Mac/Linux/Windows）
+│   └── openclaw_path_resolver.py # Cross-platform path discovery (Mac/Linux/Windows)
 ├── importer/
-│   ├── base_parser.py            # JSONL 解析（content 数组多段 text 合并）
-│   ├── incremental.py            # 增量导入 + 4层噪音检测 + AutoCut/AutoAnalyze（24h窗口）
-│   └── watcher.py                # 后台常驻，实时同步 OpenClaw → SQLite
+│   ├── base_parser.py            # JSONL parser (content array multi-text merge)
+│   ├── incremental.py            # Incremental import + 4-layer noise detection + AutoCut/AutoAnalyze (24h window)
+│   └── watcher.py                # Background daemon, real-time sync OpenClaw → SQLite
 ├── plugin/
-│   ├── llm_client.py             # LLM API 客户端（硅基流动 / DeepSeek）
-│   ├── session_analyzer.py       # v8.7 Prompt，4 维判定 + GoalExtractor
-│   ├── state_distiller.py        # 14 条规则 → Portrait + 4D 基线
-│   └── goal_extractor.py         # 从 MEMORY.md 提取长期目标（24h 缓存）
-├── batch_session_cutter.py       # 三层渐进式切割（全量扫描）
-├── batch_analyze_with_save.py    # 批量分析 + 工作流合并（30秒阈值）
+│   ├── llm_client.py             # LLM API client (SiliconFlow / DeepSeek)
+│   ├── session_analyzer.py       # v8.7 Prompt, 4D evaluation + GoalExtractor
+│   ├── state_distiller.py        # 14 rules → Portrait + 4D baseline
+│   └── goal_extractor.py         # Extract long-term goals from MEMORY.md (24h cache)
+├── batch_session_cutter.py       # Three-layer progressive cutting (full scan)
+├── batch_analyze_with_save.py    # Batch analysis + workflow merge (30s threshold)
 ├── scripts/
-│   ├── install.sh                # 一键安装
-│   ├── run_full_pipeline.py      # 一键全链路重建（新增）
-│   ├── stop_all.sh               # 一键杀进程 + 清 SQLite 锁
-│   └── start_poll.sh             # 一键启动后台 watcher
+│   ├── install.sh                # One-click install
+│   ├── run_full_pipeline.py      # One-click full pipeline rebuild
+│   ├── stop_all.sh               # One-click kill processes + clear SQLite locks
+│   └── start_poll.sh             # One-click start background watcher
 ├── docs/
-│   └── PLATFORM_LIMITATIONS.md   # 开发者防坑指南
+│   └── PLATFORM_LIMITATIONS.md   # Developer pitfall guide
 ├── data/
-│   └── flow_ecosystem.db         # SQLite 数据库
-├── README.md                     # 本文档
-├── requirements.txt              # Python 依赖
-└── .env.example                  # 环境变量模板
+│   └── flow_ecosystem.db         # SQLite database
+├── README.md                     # This document
+├── requirements.txt              # Python dependencies
+└── .env.example                  # Environment variable template
 ```
 
 ---
 
-## 技术栈
+## Tech Stack
 
 - **Runtime**: Python 3.9+ / Node.js 18+
-- **Database**: SQLite3（WAL 模式，支持并发读写）
-- **AI**: DeepSeek-V3 / MiniMax（通过硅基流动或官方 API）
-- **向量**: sentence-transformers（all-MiniLM-L6-v2，本地运行）
-- **Platform**: OpenClaw Gateway + 飞书 Bot
+- **Database**: SQLite3 (WAL mode, supports concurrent read/write)
+- **AI**: DeepSeek-V3 / MiniMax (via SiliconFlow or official API)
+- **Vector**: sentence-transformers (all-MiniLM-L6-v2, local execution)
+- **Platform**: OpenClaw Gateway + Feishu Bot
 
 ---
 
 ## ⚠️ Known Platform Limitations
 
-### 1. `/flow` 被系统 Agent 占用
-OpenClaw `secretary` Agent 内置 `/flow` 快捷方式，外部 Skill **无法覆盖**。
+### 1. `/flow` Occupied by System Agent
+OpenClaw `secretary` Agent reserves `/flow` for internal use; external Skills **cannot override**.
 
-**解决**：使用 `/deepflow` 或 `/cognitive-report` 触发，或将 Skill 绑定到非系统 Agent（如 `newness`）。
+**Fix**: Use `/deepflow` or `/cognitive-report`, or bind Skill to non-system Agent (e.g., `newness`).
 
 ### 2. `database is locked`
-如果看到此错误：
+If you see this error:
 ```bash
-bash scripts/stop_all.sh  # 杀后台 watcher + 清 SQLite 锁文件
+bash scripts/stop_all.sh  # Kill background watcher + clean SQLite lock files
 ```
-根因：旧版 `flow_handler.py` 同时做写入 + 分析，与后台 `watcher.py` 抢锁。当前版已改为**只读 + WAL 模式**。
+Root cause: Older flow_handler.py tried to write + analyze inside the report handler, competing with background watcher.py. Current version is **read-only + WAL mode**.
 
-### 3. 后台进程管理
+### 3. Background Process Management
 ```bash
-bash scripts/start_poll.sh   # 启动 watcher（实时同步）
-bash scripts/stop_all.sh     # 停止所有后台进程
+bash scripts/start_poll.sh   # Start watcher (real-time sync)
+bash scripts/stop_all.sh     # Stop all background processes
 ```
 
 ---
 
-## 开发者坑点指南（10 条铁律）
+## Developer Pitfall Guide (10 Iron Rules)
 
-| # | 坑点 | 预防措施 |
-|---|------|----------|
-| 1 | 导入后 U:A 比值失真 (0.49) | `base_parser.py` 合并 content 数组所有 text 段，不只取 `[0]` |
-| 2 | HEARTBEAT 混入有效数据 | 用 `startswith('Read HEARTBEAT.md')` 前缀匹配，**不限制 role** |
-| 3 | 清库后导入 0 条 | **必须** `rm -f .collect_state.json` 重置导入状态 |
-| 4 | 切割后 session 极少 (3 个) | `find_uncut_sessions` 默认 `since_minutes=None`（全量扫描） |
-| 5 | API 批量分析超时 | 国内优先**硅基流动** `api.siliconflow.cn`，timeout ≥ 60s |
-| 6 | 单条指令超过 6000 字 | 超限必须分步骤拆解 |
-| 7 | DB Browser 看到 HEARTBEAT 以为是 bug | 查询必须加 `WHERE is_system_noise=0 OR is_system_noise IS NULL` |
-| 8 | 切割后 avg 16.3 条以为是 bug | 真实工作场景对话较长，1-10 条占比 50%+ 即为正常 |
-| 9 | `flow_handler.py` 写入导致锁 | 当前版已改为**只读**，绝不 INSERT/UPDATE |
-| 10 | 跨平台路径问题 | `core/openclaw_path_resolver.py` 四级兜底（环境变量→配置→探测→交互） |
+| # | Pitfall | Prevention |
+|---|---------|------------|
+| 1 | Post-import U:A ratio distortion (0.49) | `base_parser.py` merges all text segments in content array, not just `[0]` |
+| 2 | HEARTBEAT mixed into valid data | Use `startswith('Read HEARTBEAT.md')` prefix match, **no role restriction** |
+| 3 | 0 imports after DB clear | **Must** `rm -f .collect_state.json` to reset import state |
+| 4 | Only 3 sessions after cutting | `find_uncut_sessions` defaults to `since_minutes=None` (full scan) |
+| 5 | API batch analysis timeout | Prioritize **SiliconFlow** `api.siliconflow.cn`, timeout ≥ 60s |
+| 6 | Single instruction > 6000 chars | Must split into steps |
+| 7 | DB Browser shows HEARTBEAT thinking it's a bug | Queries must include `WHERE is_system_noise=0 OR is_system_noise IS NULL` |
+| 8 | Avg 16.3 messages/session thinking it's a bug | Real work conversations are longer; >50% in 1-10 range is normal |
+| 9 | `flow_handler.py` writes causing locks | Current version is **read-only**, never INSERT/UPDATE |
+| 10 | Cross-platform path issues | `core/openclaw_path_resolver.py` four-level fallback (env→config→detect→interactive) |
 
 ---
 
-## 故障排查
+## Troubleshooting
 
-### `/deepflow` 无响应
-1. 检查 Skill 绑定：`grep flow-evolution-for-mind ~/.openclaw/openclaw.json`
-2. 查看日志：`tail -f /tmp/openclaw/*.log | grep -i flow`
-3. 确认触发词：用 `/deepflow` 而非 `/flow`
+### `/deepflow` Unresponsive
+1. Check Skill binding: `grep flow-evolution-for-mind ~/.openclaw/openclaw.json`
+2. Check logs: `tail -f /tmp/openclaw/*.log | grep -i flow`
+3. Confirm trigger word: Use `/deepflow` not `/flow`
 
-### 数据库表不存在
+### Database Tables Missing
 ```bash
 python3 adapters/openclaw/scripts/init.py
 ```
 
-### agent_id 为 NULL
+### agent_id is NULL
 ```bash
-# 清理 NULL 记录并重新导入
+# Clear NULL records and re-import
 sqlite3 data/flow_ecosystem.db "DELETE FROM sessions WHERE agent_id IS NULL;"
 python3 -c "from importer.incremental import run_once; run_once()"
 ```
 
 ---
 
-## 版本历史
+## Version History
 
-### V7.8-9-7-1（当前版本）
-- ✅ **全链路重建脚本** `scripts/run_full_pipeline.py`（一键清库→导入→切割→分析→验证）
-- ✅ **base_parser.py** 修复 content 数组多段 text 合并（层面 B 碎片）
-- ✅ **HEARTBEAT 前缀匹配** 修复（`startswith('Read HEARTBEAT.md')`，不限制 role）
-- ✅ **batch_session_cutter.py** 默认全量扫描（`since_minutes=None`）
-- ✅ **数据质量 S 级**（U:A 0.65 / HEARTBEAT 100% 标记 / 噪音清除 96.3%）
-- ✅ **Phase 1 核心链路 100% 跑通**
+### V7.8-9-7-1 (Current)
+- ✅ **Full pipeline rebuild script** `scripts/run_full_pipeline.py` (one-click clear→import→cut→analyze→validate)
+- ✅ **base_parser.py** fixed content array multi-text merge (layer B fragmentation)
+- ✅ **HEARTBEAT prefix matching** fixed (`startswith('Read HEARTBEAT.md')`, no role restriction)
+- ✅ **batch_session_cutter.py** defaults to full scan (`since_minutes=None`)
+- ✅ **S-tier data quality** (U:A 0.65 / HEARTBEAT 100% tagged / 96.3% noise cleared)
+- ✅ **Phase 1 core pipeline 100% verified**
 
 ### V7.8-9-7
-- ✅ `flow_handler.py` 只读 + WAL 模式 + `timeout=30`
-- ✅ `/deepflow` 触发词（避开 secretary 内置 `/flow`）
-- ✅ `scripts/stop_all.sh` + `start_poll.sh` 运维标准化
-- ✅ `docs/PLATFORM_LIMITATIONS.md` 开发者防坑指南
+- ✅ `flow_handler.py` read-only + WAL mode + `timeout=30`
+- ✅ `/deepflow` trigger (avoids secretary built-in `/flow`)
+- ✅ `scripts/stop_all.sh` + `start_poll.sh` ops standardization
+- ✅ `docs/PLATFORM_LIMITATIONS.md` developer pitfall guide
 
 ### V7.8-9-6
-- ✅ Prompt v8.7 + GoalExtractor（外部目标参照系）
-- ✅ 4 维解耦（只有目标对齐度读取 MEMORY.md）
-- ✅ 隐藏思考链（a/b/c 强制对比，不泄露到输出）
+- ✅ Prompt v8.7 + GoalExtractor (external goal reference system)
+- ✅ 4D decoupling (only Goal Alignment reads MEMORY.md)
+- ✅ Hidden thought chain (a/b/c forced comparison, no leakage to output)
 
 ### V7.8-9-5
-- ✅ 双层标记体系（`is_system_noise` + `is_auto_push`）
-- ✅ 4 层噪音检测规则
-- ✅ 工作流合并机制（30 秒阈值，38 条碎片合并）
-- ✅ 白名单策略（`role IN ('user', 'assistant')`）
+- ✅ Dual-layer tagging (`is_system_noise` + `is_auto_push`)
+- ✅ 4-layer noise detection rules
+- ✅ Workflow merge mechanism (30s threshold, 38 fragments merged)
+- ✅ Whitelist strategy (`role IN ('user', 'assistant')`)
 
 ### V7.8-9-3
-- ✅ 全自动安装脚本（`install.sh`）
-- ✅ 自动绑定 Skill 到所有 Agent
-- ✅ sys.argv 参数污染隔离
-- ✅ 动态 Schema 演进
+- ✅ Full auto-install script (`install.sh`)
+- ✅ Auto-bind Skill to all Agents
+- ✅ sys.argv parameter pollution isolation
+- ✅ Dynamic Schema evolution
 
 ---
 
-## 路线图
+## Roadmap
 
-| 阶段 | 功能 | 状态 |
-|------|------|------|
-| **Phase 1** | 实时调音 + Session 分析 + 报告展示 | ✅ 100% 跑通 |
-| **Phase 2** | 仪表盘 + 跨 Session 模式识别 + 基于 4 维的 42 维精细分析扩展 | ⏳ 待实现 |
-| **Phase 3** | 时序 + GraphRAG 的自然涌现 | 🔮 远期 |
+| Phase | Feature | Status |
+|-------|---------|--------|
+| **Phase 1** | Real-time tuning + Session analysis + Report display | ✅ 100% verified |
+| **Phase 2** | Dashboard + cross-Session pattern recognition + 4D-based 42D fine-grained analysis extension | ⏳ Pending |
+| **Phase 3** | Temporal + GraphRAG natural emergence | 🔮 Long-term |
 
 ---
 
-## 许可证
+## License
 
 MIT License
 
 ---
 
-## 贡献指南
+## Contributing
 
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
-3. 提交更改 (`git commit -m 'Add amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 创建 Pull Request
-
-
+1. Fork this repo
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Create Pull Request
