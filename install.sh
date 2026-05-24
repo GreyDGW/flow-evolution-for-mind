@@ -27,7 +27,7 @@ echo "【2/6】同步 Plugin 到 extensions"
 echo "========================================" 
 mkdir -p "$EXT_DIR" 
 cp -r "$PROJECT_DIR/adapters/openclaw/plugin/dist/"* "$EXT_DIR/" 2>/dev/null || true 
-cp "$PROJECT_DIR/adapters/openclaw/plugin/openclaw.plugin.json" "$EXT_DIR/" 
+cp "$PROJECT_DIR/adapters/openclaw/plugin/plugin.json" "$EXT_DIR/" 
 echo "✅ Plugin 文件已同步" 
 
 echo "" 
