@@ -1,4 +1,4 @@
-> **[PLATFORM LIMIT]** OpenClaw's system Agent (e.g., "secretary") may have a built-in `/flow` shortcut that overrides external Skills. If `/flow` returns a short summary instead of the full report, use **`/deepflow`** or **`/cognitive-report`** instead.
+> **Available to ALL agents.** Any agent can handle `/flow`, `/deepflow`, or natural language queries like "这周怎么样". This skill is globally bound.
 
 ---
 name: "flow-evolution-for-mind"
