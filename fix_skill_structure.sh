@@ -1,13 +1,32 @@
 #!/bin/bash
 # ════════════════════════════════════════════════════
-#  Fix: Skill 目录结构修复
+#  Fix: Skill 目录结构修复 + 清理旧脚本
 #  根因: OpenClaw skills/<name>/ 应只包含 SKILL.md
 #       我们塞入了 flow_handler.py, hooks/, index.js 等导致发现失败
 # ════════════════════════════════════════════════════
 
 set -e
 
+PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILL_DIR="$HOME/.openclaw/skills/flow-evolution-for-mind"
+
+echo "========================================"
+echo "  Skill 结构修复 + 旧脚本清理"
+echo "========================================"
+echo ""
+
+# ── Pre-cleanup: 删除今天调试产生的临时脚本 ──
+echo "--- 清理旧诊断脚本 ---"
+CLEANED=0
+for pattern in final_* emergency_* diagnose_* ultimate_* root_cause_* test_*.sh fix_module_import.sh check_agents.py check_agent_detail.py check_bindings.py; do
+  for f in "$PROJECT_DIR"/$pattern; do
+    if [ -f "$f" ]; then
+      rm -f "$f"
+      CLEANED=$((CLEANED+1))
+    fi
+  done
+done
+echo "  已删除 $CLEANED 个临时文件"
 
 echo "=== Fix 1: 清理全局 Skill 目录 ==="
 echo "之前:"
@@ -72,13 +91,43 @@ echo "=== 验证 ==="
 echo "Skill 目录结构:"
 ls -la "$SKILL_DIR/"
 echo ""
-echo "Plugin 加载状态:"
-grep '\[flow-style\]' /tmp/openclaw_skill_fix.log | tail -5 || echo "(等待加载)"
+
+echo "Gateway 状态:"
+GW_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:18789/ 2>/dev/null || echo "000")
+GW_TIME=$(curl -s -o /dev/null -w "%{time_total}s" http://127.0.0.1:18789/ 2>/dev/null || echo "?")
+echo "  HTTP $GW_CODE | 响应时间: $GW_TIME"
+echo ""
+
+echo "Plugin 加载状态 (openclaw plugins list):"
+/usr/local/bin/openclaw plugins list 2>&1 | grep -E "flow-evolution|enabled|loaded" | tail -5 || echo "(未检测到)"
+echo ""
+
+echo "Gateway 日志中的 flow-style 记录:"
+LOG_FILE=$(ls -t /tmp/openclaw_*.log 2>/dev/null | head -1)
+if [ -n "$LOG_FILE" ]; then
+  echo "  日志文件: $LOG_FILE"
+  grep '\[flow-style\]' "$LOG_FILE" 2>/dev/null | tail -5 || echo "  (无 flow-style 日志)"
+else
+  echo "  (未找到 Gateway 日志文件)"
+fi
 
 echo ""
-echo "╔══════════════════════════════════════╗"
-echo "║  ✅ 修复完成！请在飞书中测试:        ║"
-echo "║  1. 情报官 → 发送 /flow              ║"
-echo "║  2. 术语学习 → 发送 /flow            ║"
-echo "║  3. 产品总监 → 发送 这周怎么样      ║"
-echo "╚══════════════════════════════════════╝"
+echo "Skill 文件可读性:"
+if [ -f "$SKILL_DIR/SKILL.md" ]; then
+  echo "  SKILL.md: $(wc -l < "$SKILL_DIR/SKILL.md") 行"
+fi
+if [ -f "$SKILL_DIR/scripts/flow_handler.py" ]; then
+  echo "  scripts/flow_handler.py: $(wc -l < "$SKILL_DIR/scripts/flow_handler.py") 行"
+fi
+
+echo ""
+echo "========================================"
+echo "  修复完成！请在飞书中测试:"
+echo "========================================"
+echo "  1. 情报官(newness)   → 发送 /flow"
+echo "  2. 产品总监(main)    → 发送 这周怎么样"
+echo "  3. 技术总监(techboss)→ 发送 /deepflow"
+echo ""
+echo "  如果仍不工作，查看实时日志:"
+echo "  tail -f ${LOG_FILE:-/tmp/openclaw_skill_fix.log} | grep -E 'flow-style|flow-evolution|skill'"
+echo ""
