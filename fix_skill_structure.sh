@@ -71,6 +71,16 @@ sed -i '' 's|python3 {baseDir}/scripts/flow_handler.py|python3 {baseDir}/scripts
 echo "✅ SKILL.md 路径已更新: scripts/flow_handler.py"
 
 echo ""
+echo "=== Fix 3.5: 重新注册 Plugin (CLI) ==="
+PLUGIN_SRC="$HOME/Desktop/skill相关文档/flow-evolution-for-mind/adapters/openclaw/plugin"
+if [ -d "$PLUGIN_SRC" ]; then
+  openclaw plugins install -l "$PLUGIN_SRC" 2>&1 | grep -E "Linked|error|failed" || true
+  echo "  ✅ CLI 注册完成"
+else
+  echo "  ⚠️ 插件源目录不存在: $PLUGIN_SRC"
+fi
+
+echo ""
 echo "=== Fix 4: 重启 Gateway ==="
 pkill -9 -f "openclaw gateway" 2>/dev/null || true
 sleep 2
