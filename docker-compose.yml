@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  flow-evolution:
+    build: .
+    container_name: flow-ecosystem
+    restart: unless-stopped
+    ports:
+      - "18789:18789"
+    environment:
+      - FLOW_EVOLUTION_DIR=/app
+      - OPENCLAW_HOME=/root/.openclaw
+      # LLM API 配置 (从 .env 或 docker-compose.override.yml 注入)
+      - SILICONFLOW_API_KEY=${SILICONFLOW_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+    volumes:
+      # 持久化数据库
+      - flow-data:/app/data
+      # 持久化 OpenClaw 配置
+      - openclaw-config:/root/.openclaw
+      # 可选: 挂载本地源码开发
+      # - .:/app:rw
+    networks:
+      - flow-net
+
+  # 可选: 使用外部 OpenClaw Gateway (如果已有运行中的实例)
+  # 取消下方注释并注释掉上面的 flow-evolution service
+  # flow-evolution-client:
+  #   build: .
+  #   container_name: flow-ecosystem-client
+  #   restart: unless-stopped
+  #   environment:
+  #     - FLOW_EVOLUTION_DIR=/app
+  #     - OPENCLAW_GATEWAY_URL=http://host.docker.internal:18789
+  #   volumes:
+  #     - flow-data:/app/data
+  #     - openclaw-config:/root/.openclaw
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   network_mode: host
+
+volumes:
+  flow-data:
+    driver: local
+  openclaw-config:
+    driver: local
+
+networks:
+  flow-net:
+    driver: bridge

@@ -1,44 +1,131 @@
-# 环境变量
-.env
+# ============================================
+# Flow Ecosystem - .gitignore
+# 排除临时文件、诊断脚本、日志和构建产物
+# ============================================
 
-# 数据库
-data/*.db
-data/*.db-journal
-
-# Python
+# --- Python ---
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+eggs/
+dist/
+build/
+*.egg
 .venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.mypy_cache/
 
-# Node
+# --- Node.js ---
 node_modules/
+package-lock.json
+npm-debug.log*
 
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-
-# 日志
-*.log
-
-# 导入状态文件（必须忽略，含本地路径和偏移量）
-.collect_state.json
-.collect_state.json.bak.*
-.collect_state_副本.json
-
-# 数据目录（整个目录忽略，防止误提交数据库）
-data/
-# SQLite 数据库文件
-*.db
-*.db-journal
+# --- 数据库 ---
 *.db-wal
 *.db-shm
+*.db-journal
 
-# 备份文件
-*.bak
-*.bak.*
+# --- 日志 ---
+logs/
+*.log
+/tmp/openclaw_*.log
 
-# 历史归档（体积过大）
-archive/old_backups/
+# --- 临时诊断脚本 (68个) ---
+test_*.py
+test_*.sh
+check_*.py
+check_*.sh
+fix_*.sh
+fix_*.py
+diagnose_*.sh
+deep_diagnose_*.py
+emergency_*.sh
+emergency_rollback.sh
+root_cause_fix.sh
+ultimate_fix.sh
+final_*.sh
+final_*.py
+final_verify.py
+clean_and_analyze.sh
+restore_extensions_method.sh
+deploy_async.sh
+register_plugin.sh
+fix_package_format.sh
+fix_scope.sh
+fix_object_format.sh
+fix_config_restart.sh
+fix_module_import.sh
+fix_plugins_list.sh
+fix_init_merge.py
+fix_base_parser.py
+fix_base_parser_v3.py
+fix_cutter_filter.py
+fix_cognition_stats.py
+fix_flow_handler.py
+reinstall_plugin.sh
+npm_install_plugin.sh
+sync_full_index.sh
+update_all_scripts.py
+
+# --- 批量分析/重建脚本 ---
+analyze_*.py
+reanalyze_*.py
+batch_*.py
+full_diagnosis.py
+full_reset_and_import.py
+full_reset_import_v2.py
+recut_historical_data_data.py
+backfill_v85_portrait.py
+cut_0423.py
+complete_420.py
+check_420_*.py
+check_*.py
+export_v84.py
+export_v85.py
+export_v85_full.py
+export_unique.py
+generate_report.py
+optimize_model_loading.py
+path_setup.py
+profile_batch_*.py
+retry_*.py
+show_report.py
+validate_v8*.py
+verify_*.py
+data_quality_check*.py
+
+# --- 报告/证据文件 (运行时生成) ---
+report_*.md
+report_today.md
+memory.md
+v8*_evidence.txt
+
+# --- IDE / 编辑器 ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# --- Trae (AI编辑器) ---
+.trae/
+.trae_task.md
+
+# --- 归档 ---
+archive/
+
+# --- 环境配置 ---
+.env
+.env.local
+.flow_evolution_dir
+.collect_state.json
+
+# --- 操作系统 ---
+Thumbs.db

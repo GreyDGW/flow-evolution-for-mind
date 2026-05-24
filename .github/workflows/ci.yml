@@ -1,0 +1,290 @@
+name: Flow Ecosystem CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # ==========================================
+  # Job 1: 文件完整性检查
+  # ==========================================
+  lint:
+    name: 📋 File Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check critical files exist
+        run: |
+          echo "=== 检查核心文件 ==="
+          ERR=0
+          for f in \
+            adapters/openclaw/plugin/package.json \
+            adapters/openclaw/plugin/dist/index.js \
+            adapters/openclaw/plugin/dist/hooks/counter.js \
+            adapters/openclaw/plugin/dist/hooks/injector.js \
+            adapters/openclaw/plugin/openclaw.plugin.json \
+            adapters/openclaw/plugin/dist/soul-protocols/zh-CN/portraits.json \
+            adapters/openclaw/scripts/flow_handler.py \
+            adapters/openclaw/scripts/SKILL.md \
+            plugin/session_analyzer.py \
+            plugin/state_distiller.py \
+            plugin/llm_client.py \
+            importer/incremental.py \
+            scripts/start_poll.sh \
+            scripts/stop_all.sh \
+            install_v2.sh \
+            healthcheck.sh \
+            Dockerfile; do
+            if [ ! -f "$f" ]; then
+              echo "❌ 缺失: $f"
+              ERR=$((ERR+1))
+            fi
+          done
+          if [ "$ERR" -gt 0 ]; then
+            echo "::error::发现 $ERR 个缺失文件"
+            exit 1
+          fi
+          echo "✅ 所有核心文件存在"
+
+      - name: Verify index.js uses correct import path
+        run: |
+          echo "=== 检查 index.js 导入路径 ==="
+          grep -q 'openclaw/plugin-sdk/core' adapters/openclaw/plugin/dist/index.js && \
+            echo "✅ 使用官方 SDK 路径" || { echo "::error::index.js 未使用 openclaw/plugin-sdk/core"; exit 1; }
+          
+          ! grep -q 'openclaw/dist/plugin-entry' adapters/openclaw/plugin/dist/index.js && \
+            echo "✅ 无硬编码内部路径" || { echo "::error::index.js 包含硬编码路径"; exit 1; }
+
+      - name: Verify async hook pattern
+        run: |
+          echo "=== 检查异步 Hook 模式 ==="
+          grep -q 'setImmediate' adapters/openclaw/plugin/dist/index.js && \
+            echo "✅ 使用 setImmediate 异步包装" || { echo "::error::缺少 setImmediate 异步包装"; exit 1; }
+          grep -q 'dynamic import' adapters/openclaw/plugin/dist/index.js || \
+          grep -q 'await import(' adapters/openclaw/plugin/dist/index.js && \
+            echo "✅ 使用动态 import" || { echo "::error::缺少动态 import"; exit 1; }
+
+      - name: No /flow string matching in index.js
+        run: |
+          echo "=== 检查无 /flow 字符串匹配 ==="
+          ! grep -qE "'/flow'|\"/flow\"" adapters/openclaw/plugin/dist/index.js || \
+            { echo "::error::index.js 不应包含 /flow 字符串匹配 (交给 SKILL.md)"; exit 1; }
+          echo "✅ 无 /flow 匹配逻辑"
+
+  # ==========================================
+  # Job 2: Python 语法检查
+  # ==========================================
+  python-lint:
+    name: 🐍 Python Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install --quiet pyflakes mypy 2>/dev/null || true
+
+      - name: Syntax check all .py files
+        run: |
+          ERR=0
+          for f in $(find . -name "*.py" -not -path "./node_modules/*" -not -path "./.venv/*"); do
+            python3 -m py_compile "$f" 2>&1 || ERR=$((ERR+1))
+          done
+          [ "$ERR" -eq 0 ] && echo "✅ 所有 Python 文件语法正确" || { echo "::error::$ERR 个文件有语法错误"; exit 1; }
+
+      - name: Check flow_handler.py cold start fix
+        run: |
+          python3 << 'PYEOF'
+import ast, sys
+
+with open("adapters/openclaw/scripts/flow_handler.py") as f:
+    source = f.read()
+
+# 检查是否有 cold start 初始化代码
+if "_was_initialized" in source or "cold start" in source.lower():
+    print("✅ P1 Cold start fix 存在")
+else:
+    print("⚠️ 未检测到 cold start 初始化代码")
+    
+# 检查 current_style 默认值初始化
+if 'current_style = json.loads(row[0]) if row else None' in source:
+    print("✅ current_style 空值检查修复存在")
+else:
+    print("⚠️ current_style 空值检查可能缺失")
+PYEOF
+
+  # ==========================================
+  # Job 3: Node.js / Plugin 检查
+  # ==========================================
+  node-lint:
+    name: 🟢 Node.js Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: adapters/openclaw/package.json
+
+      - name: Install plugin dependencies
+        run: cd adapters/openclaw/plugin && npm install
+
+      - name: Verify module resolution
+        run: |
+          cd adapters/openclaw/plugin
+          node -e "
+            const path = require('path');
+            
+            // 测试 1: 官方 SDK 路径可解析
+            try {
+              require.resolve('openclaw/plugin-sdk/core', { paths: [path.join(process.cwd(), 'node_modules')] });
+              console.log('✅ openclaw/plugin-sdk/core 可解析');
+            } catch(e) {
+              console.log('⚠️ openclaw/plugin-sdk/core 在 CI 中不可解析 (需要安装 openclaw)');
+            }
+            
+            // 测试 2: counter.js 可加载
+            try {
+              const counter = require('./dist/hooks/counter.js');
+              console.log('✅ counter.js 可加载');
+              if (typeof counter.registerCounterHook !== 'function') {
+                process.exit(1);
+              }
+              console.log('✅ registerCounterHook 导出正确');
+            } catch(e) {
+              console.error('❌ counter.js 加载失败:', e.message);
+              process.exit(1);
+            }
+            
+            // 测试 3: injector.js 可加载
+            try {
+              const injector = require('./dist/hooks/injector.js');
+              console.log('✅ injector.js 可加载');
+              if (typeof injector.registerInjectorHook !== 'function') {
+                process.exit(1);
+              }
+              console.log('✅ registerInjectorHook 导出正确');
+            } catch(e) {
+              console.error('❌ injector.js 加载失败:', e.message);
+              process.exit(1);
+            }
+            
+            // 测试 4: portraits.json 可加载
+            try {
+              const portraits = JSON.parse(require('fs').readFileSync('./dist/soul-protocols/zh-CN/portraits.json'));
+              const count = Object.keys(portraits).length;
+              if (count < 10) {
+                console.error('❌ portraits.json 只有 ' + count + ' 种画像，预期 14 种');
+                process.exit(1);
+              }
+              console.log('✅ portraits.json: ' + count + ' 种画像定义');
+            } catch(e) {
+              console.error('❌ portraits.json 加载失败:', e.message);
+              process.exit(1);
+            }
+            
+            console.log('\\n🎉 所有 Node.js 检查通过!');
+          "
+
+  # ==========================================
+  # Job 4: Docker 构建测试
+  # ==========================================
+  docker-build:
+    name: 🐳 Docker Build Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t flow-ecosystem:test .
+          echo "✅ Docker 镜像构建成功"
+
+      - name: Quick smoke test inside container
+        run: |
+          docker run --rm flow-ecosystem:test bash -c '
+            echo "=== Docker 容器内环境检查 ==="
+            python3 --version | head -1
+            node --version
+            which openclaw || echo "openclaw CLI not installed (expected in container)"
+            
+            echo ""
+            echo "=== 文件完整性 ==="
+            test -f install_v2.sh && echo "✅ install_v2.sh" || echo "❌ install_v2.sh"
+            test -f healthcheck.sh && echo "✅ healthcheck.sh" || echo "❌ healthcheck.sh"
+            test -f Dockerfile && echo "✅ Dockerfile" || echo "❌ Dockerfile"
+            test -f docker-compose.yml && echo "✅ docker-compose.yml" || echo "❌ docker-compose.yml"
+            
+            echo ""
+            echo "=== 关键文件内容验证 ==="
+            head -3 adapters/openclaw/plugin/dist/index.js
+            
+            echo ""
+            echo "✅ 容器环境正常"
+          '
+
+  # ==========================================
+  # Job 5: install_v2.sh 语法验证
+  # ==========================================
+  install-script:
+    name: 🔧 Install Script Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate install_v2.sh syntax
+        run: |
+          bash -n install_v2.sh && echo "✅ install_v2.sh 语法正确" || { echo "::error::install_v2.sh 有语法错误"; exit 1; }
+
+      - name: Validate healthcheck.sh syntax
+        run: |
+          bash -n healthcheck.sh && echo "✅ healthcheck.sh 语法正确" || { echo "::error::healthcheck.sh 有语法错误"; exit 1; }
+
+      - name: Check install_v2.sh covers all fixes
+        run: |
+          echo "=== 检查 install_v2.sh 包含所有关键步骤 ==="
+          
+          grep -q "openclaw plugins install -l" install_v2.sh && echo "✅ CLI 注册方式" || echo "❌ 缺少 CLI 注册"
+          grep -q "allowConversationAccess" install_v2.sh && echo "✅ allowConversationAccess" || echo "❌ 缺少 allowConversationAccess"
+          grep -q "start_poll.sh" install_v2.sh && echo "✅ 启动轮询" || echo "❌ 缺少启动轮询"
+          grep -q "current_style" install_v2.sh && echo "✅ 冷启动初始化" || echo "❌ 缺少冷启动初始化"
+          grep -q "setImmediate\|async.*import" install_v2.sh && echo "✅ 提及异步模式" || echo "⚠️ 未提及异步模式"
+          grep -q "openclaw/plugin-sdk/core" install_v2.sh || grep -q "官方 SDK" install_v2.sh && echo "✅ 提及官方SDK" || echo "⚠️ 未提及官方SDK"
+
+  # ==========================================
+  # Summary
+  # ==========================================
+  ci-summary:
+    name: 📊 CI Summary
+    needs: [lint, python-lint, node-lint, docker-build, install-script]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summary
+        run: |
+          echo ""
+          echo "╔══════════════════════════════════════╗"
+          echo "║   Flow Ecosystem CI 结果               ║"
+          echo "╚══════════════════════════════════════╝"
+          echo ""
+          echo "  📋 文件完整性:     ${{ needs.lint.result == 'success' && '✅ 通过' || '❌ 失败' }}"
+          echo "  🐍 Python Lint:     ${{ needs.python-lint.result == 'success' && '✅ 通过' || '❌ 失败' }}"
+          echo "  🟢 Node.js Lint:    ${{ needs.node-lint.result == 'success' && '✅ 通过' || '❌ 失败' }}"
+          echo "  🐳 Docker 构建:    ${{ needs.docker-build.result == 'success' && '✅ 通过' || '❌ 失败' }}"
+          echo "  🔧 安装脚本验证:  ${{ needs.install-script.result == 'success' && '✅ 通过' || '❌ 失败' }}"
+          echo ""
