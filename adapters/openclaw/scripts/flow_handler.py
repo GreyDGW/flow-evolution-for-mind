@@ -125,7 +125,9 @@ def update_style(agent_id: str, turn_count: int = 0):
     # 2. Current Style (4D, backward compatible)
     c.execute("SELECT value FROM kv_store WHERE agent_id=? AND key='current_style'", (agent_id,))
     row = c.fetchone()
-    current_style = json.loads(row[0]) if row else {"pace":"explore","depth":"surface","tone":"neutral","friction":"direct"}
+    current_style = json.loads(row[0]) if row else None
+    if not current_style:
+        current_style = {"pace":"explore","depth":"surface","tone":"neutral","friction":"direct","portrait":"平稳推进"}
     if "friction" not in current_style: current_style["friction"] = "direct"
 
     # V7.8-9-2: 修复 agent_id 查询（兼容历史 NULL 数据）
@@ -154,6 +156,19 @@ def update_style(agent_id: str, turn_count: int = 0):
     """, (agent_id,week_ago))
     week_dist = c.fetchall()
     conn.close()
+
+    # P1 FIX: Cold start initialization - write default current_style to kv_store
+    # so injector.js can read it even before Scanner makes its first UPDATE decision
+    _was_initialized = False
+    if not row:
+        if recent:
+            current_style["portrait"] = recent[0][0]
+        _init_conn = sqlite3.connect(db_path, timeout=30)
+        _init_conn.execute("PRAGMA journal_mode=WAL;")
+        _init_conn.execute("INSERT OR REPLACE INTO kv_store(agent_id,key,value,updated_at)VALUES(?,'current_style',?,datetime('now'))",(agent_id,json.dumps(current_style)))
+        _init_conn.commit(); _init_conn.close()
+        print(f"Initialized current_style for {agent_id}: {current_style}", file=sys.stderr)
+        _was_initialized = True
 
     # Friction legal domain mapping
     # V7.8-9-3: 删除 friction_map，friction 由 Scanner 独立判断，Portrait 不再锁定合法域
