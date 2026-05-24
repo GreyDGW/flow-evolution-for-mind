@@ -10,23 +10,23 @@
 ## 2. database is locked（架构层）
 
 - **现象**：执行 flow_handler.py 时报 `database is locked`，或飞书返回 "Agent couldn't generate a response"
-- **根因**：旧版 flow_handler.py 同时执行数据同步（importer.run_once）+ Session切割（AutoCut）+ 自动分析（AutoAnalyze），与后台 `importer.watcher` 进程竞争 SQLite 写锁
+- **根因**：旧版 flow_handler.py 同时执行数据同步（importer.run_once）+ Session切割（AutoCut）+ 自动分析（AutoAnalyze），与后台轮询引擎进程竞争 SQLite 写锁
 - **解决**（已固化到代码）：
   - flow_handler.py 现为**只读报告生成器**，所有写操作由后台独立进程负责
   - 数据库连接使用 `timeout=30` + `PRAGMA journal_mode=WAL`
-  - 标准化运维脚本：`bash scripts/stop_all.sh` 清锁，`bash scripts/start_poll.sh` 启后台
+  - 标准化运维脚本：`bash scripts/stop_all.sh` 清锁，`bash scripts/start_poll.sh` 启后台轮询
 
-## 3. 后台 watcher 僵尸进程（运维层）
+## 3. 后台轮询进程管理（运维层）
 
-- **现象**：即使退出 OpenClaw，数据库仍被锁定，`lsof` 显示 Python 进程占用
-- **根因**：`importer.watcher` 是独立进程，不受 OpenClaw Gateway 生命周期管理
+- **现象**：即使退出 OpenClaw，数据库仍可能被锁定，`lsof` 显示 Python 进程占用
+- **根因**：轮询引擎（incremental.py）是独立进程，不受 OpenClaw Gateway 生命周期管理
 - **解决**：`bash scripts/stop_all.sh` 一键清理
 
 ## 架构铁律（防复发）
 
 | 模块 | 职责 | 写入 DB？ | 触发方式 |
 |------|------|-----------|----------|
-| `importer/watcher.py` | 实时同步 OpenClaw → SQLite | ✅ | 后台常驻 |
+| `importer/incremental.py` | 轮询同步 OpenClaw → SQLite（30s间隔） | ✅ | 后台常驻 |
 | `batch_session_cutter.py` | Session 向量切割 | ✅ | 定时/cron |
 | `batch_analyze_with_save.py` | LLM 4维分析 | ✅ | 定时/cron |
 | `flow_handler.py` | 报告生成 | ❌ **只读** | 用户触发 |

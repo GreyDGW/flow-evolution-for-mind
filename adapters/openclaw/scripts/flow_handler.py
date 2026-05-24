@@ -1,10 +1,10 @@
-# [ARCHITECTURE NOTE] 
-# This script is PURE REPORT GENERATOR. It does NOT: 
-#   - Sync data (handled by background importer/watcher) 
-#   - Cut sessions (handled by batch_session_cutter.py cron) 
-#   - Analyze sessions (handled by batch_analyze_with_save.py cron) 
-# It ONLY reads from DB and prints the report to stdout. 
-# This prevents "database is locked" errors when background processes write. 
+# [ARCHITECTURE NOTE]
+# This script is PURE REPORT GENERATOR. It does NOT:
+#   - Sync data (handled by background polling engine)
+#   - Cut sessions (handled by batch_session_cutter.py cron)
+#   - Analyze sessions (handled by batch_analyze_with_save.py cron)
+# It ONLY reads from DB and prints the report to stdout.
+# This prevents "database is locked" errors when background processes write.
 # 
 # [PLATFORM NOTE] 
 # OpenClaw's "secretary" Agent has a built-in /flow shortcut that CANNOT be 
@@ -68,7 +68,7 @@ CORE_DIR = find_core_dir()
 sys.path.insert(0, CORE_DIR)
 os.chdir(CORE_DIR)
 
-# [ARCH] Disabled: avoid DB lock. Background watcher handles sync.
+# [ARCH] Disabled: avoid DB lock. Background polling handles sync.
 # from importer import incremental
 from plugin.deep_report_final import DeepReportFinal
 
@@ -289,7 +289,7 @@ def main():
 # [ARCH] Disabled:             db_path="data/flow_ecosystem.db"
 # [ARCH] Disabled:         )
         # print(f"✅ 同步完成，新增 {imported} 条消息", file=sys.stderr)
-        print("ℹ️ 数据同步已禁用（由后台 watcher 处理）", file=sys.stderr)
+        print("ℹ️ 数据同步已禁用（由后台轮询引擎处理）", file=sys.stderr)
 
         # === 积压检测：如果有大量历史未分析数据，自动补齐 === [DISABLED - 避免数据库锁定]
         # try:

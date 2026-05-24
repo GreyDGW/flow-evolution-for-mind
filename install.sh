@@ -93,20 +93,9 @@ with open(p, 'w') as f:
 PYEOF 
  
 echo ""
-echo "【5.5/6】清理遗留的 importer 进程（防止旧代码缓存）"
+echo "【5.5/6】安装完成提示"
 echo "========================================"
-# 查找并终止所有 importer.watcher 进程
-WATCHER_PIDS=$(ps aux | grep "importer.watcher" | grep -v grep | awk '{print $2}')
-if [ -n "$WATCHER_PIDS" ]; then
-    echo "发现遗留 watcher 进程: $WATCHER_PIDS"
-    kill $WATCHER_PIDS 2>/dev/null
-    sleep 2
-    echo "✅ 已清理旧 watcher 进程"
-else
-    echo "✅ 无遗留 watcher 进程"
-fi
-
-echo ""
+echo "✅ 后台数据同步请使用: bash start_poll.sh"
 echo "【6/6】重启 Gateway"
 echo "========================================" 
 openclaw gateway restart 

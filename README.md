@@ -271,8 +271,7 @@ openclaw_flow_plugin/
 │   └── openclaw_path_resolver.py # Cross-platform path discovery (Mac/Linux/Windows)
 ├── importer/
 │   ├── base_parser.py            # JSONL parser (content array multi-text merge)
-│   ├── incremental.py            # Incremental import + 4-layer noise detection + AutoCut/AutoAnalyze (24h window)
-│   └── watcher.py                # Background daemon, real-time sync OpenClaw → SQLite
+│   └── incremental.py            # Incremental import + 4-layer noise detection + AutoCut/AutoAnalyze (24h window)
 ├── plugin/
 │   ├── llm_client.py             # LLM API client (SiliconFlow / DeepSeek)
 │   ├── session_analyzer.py       # v8.7 Prompt, 4D evaluation + GoalExtractor
@@ -284,7 +283,7 @@ openclaw_flow_plugin/
 │   ├── install.sh                # One-click install
 │   ├── run_full_pipeline.py      # One-click full pipeline rebuild
 │   ├── stop_all.sh               # One-click kill processes + clear SQLite locks
-│   └── start_poll.sh             # One-click start background watcher
+│   └── start_poll.sh             # One-click start background polling engine
 ├── docs/
 │   └── PLATFORM_LIMITATIONS.md   # Developer pitfall guide
 ├── data/
@@ -316,13 +315,13 @@ OpenClaw `secretary` Agent reserves `/flow` for internal use; external Skills **
 ### 2. `database is locked`
 If you see this error:
 ```bash
-bash scripts/stop_all.sh  # Kill background watcher + clean SQLite lock files
+bash scripts/stop_all.sh  # Kill background processes + clean SQLite lock files
 ```
-Root cause: Older flow_handler.py tried to write + analyze inside the report handler, competing with background watcher.py. Current version is **read-only + WAL mode**.
+Root cause: Older flow_handler.py tried to write + analyze inside the report handler, competing with background polling engine. Current version is **read-only + WAL mode**.
 
 ### 3. Background Process Management
 ```bash
-bash scripts/start_poll.sh   # Start watcher (real-time sync)
+bash scripts/start_poll.sh   # Start polling engine (30s interval sync)
 bash scripts/stop_all.sh     # Stop all background processes
 ```
 
