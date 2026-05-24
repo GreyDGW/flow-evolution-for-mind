@@ -1,1 +1,14 @@
-{"name": "flow-evolution-for-mind", "version": "7.8.9", "description": "Flow Ecosystem Plugin - Cognitive evolution system with 4D tuning", "main": "dist/index.js", "hooks": {"counter": "dist/hooks/counter.js", "injector": "dist/hooks/injector.js"}, "protocols": {"portraits": "dist/soul-protocols/zh-CN/portraits.json"}}
+{
+  "id": "flow-evolution-for-mind",
+  "name": "flow-evolution-for-mind",
+  "version": "7.8.9",
+  "description": "Flow Ecosystem Plugin - Cognitive evolution system with 4D tuning",
+  "main": "dist/index.js",
+  "hooks": {
+    "counter": "dist/hooks/counter.js",
+    "injector": "dist/hooks/injector.js"
+  },
+  "protocols": {
+    "portraits": "dist/soul-protocols/zh-CN/portraits.json"
+  }
+}
