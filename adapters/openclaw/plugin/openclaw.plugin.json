@@ -1,1 +1,11 @@
-{"id": "flow-style-plugin", "name": "Flow Style Tuner", "description": "Cognitive style monitoring and injection for Flow Evolution", "kind": "utility", "configSchema": {"type": "object", "properties": {"dbPath": {"type": "string", "description": "SQLite database path"}}}}
+{
+  "id": "flow-evolution-for-mind",
+  "name": "Flow Ecosystem Plugin",
+  "version": "7.8.9",
+  "description": "Cognitive evolution system with 4D tuning",
+  "main": "dist/index.js",
+  "entry": "dist/index.js",
+  "type": "extension",
+  "permissions": [],
+  "configSchema": {}
+}
