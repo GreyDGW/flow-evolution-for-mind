@@ -11,7 +11,7 @@ function getDbPath() {
     const dir = fs.readFileSync(markerFile, 'utf8').trim();
     return path.join(dir, 'data', 'flow_ecosystem.db');
   }
-  return path.join(process.env.HOME, 'Desktop', 'skill相关文档', 'openclaw_flow_plugin', 'data', 'flow_ecosystem.db');
+  return path.join(process.env.HOME, 'Desktop', 'skill相关文档', 'flow-evolution-for-mind', 'data', 'flow_ecosystem.db');
 }
 
 function loadSoulProtocol() {

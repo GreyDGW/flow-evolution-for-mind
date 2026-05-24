@@ -231,6 +231,33 @@ with open(p, 'w') as f:
 PYEOF
 
 # ==========================================
+# Step 5.5: 设置环境变量 + 标记文件 (P4 Fix)
+# ==========================================
+echo ""
+echo -e "${YELLOW}【Step 5.5】环境变量配置${NC}"
+echo "----------------------------------------"
+
+# 写入 FLOW_EVOLUTION_DIR 到标记文件 (counter.js/injector.js 的 fallback #2)
+echo "$PROJECT_DIR" > "$HOME/.flow_evolution_dir"
+echo "  ✅ ~/.flow_evolution_dir → $PROJECT_DIR"
+
+# 写入到 shell profile 以便子进程继承
+PROFILE_SNIPPER='
+# Flow Ecosystem (auto-added by install_v2.sh)
+export FLOW_EVOLUTION_DIR="'"$PROJECT_DIR"'"
+'
+if ! grep -q "FLOW_EVOLUTION_DIR" "$HOME/.zshrc" 2>/dev/null; then
+    echo "$PROFILE_SNIPPER" >> "$HOME/.zshrc"
+    echo "  ✅ 已添加到 ~/.zshrc"
+else
+    echo "  ⚠️  ~/.zshrc 中已有 FLOW_EVOLUTION_DIR (跳过)"
+fi
+
+# 立即导出当前 shell
+export FLOW_EVOLUTION_DIR="$PROJECT_DIR"
+echo "  ✅ FLOW_EVOLUTION_DIR=$PROJECT_DIR"
+
+# ==========================================
 # Step 6: 初始化数据库 + current_style (P1 Fix)
 # ==========================================
 echo ""

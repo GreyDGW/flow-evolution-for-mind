@@ -4,8 +4,13 @@
 
 cd "$(dirname "$0")/.."
 
+# 设置环境变量 (P4: 确保 counter.js/injector.js 能找到数据库)
+export FLOW_EVOLUTION_DIR="$(pwd)"
+echo "$FLOW_EVOLUTION_DIR" > "$HOME/.flow_evolution_dir" 2>/dev/null || true
+
 echo "========================================"
 echo "启动 Flow Ecosystem 轮询引擎"
+echo "  FLOW_EVOLUTION_DIR=$FLOW_EVOLUTION_DIR"
 echo "========================================"
 
 # 检查 Python 环境

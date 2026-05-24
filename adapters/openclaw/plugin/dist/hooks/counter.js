@@ -17,7 +17,7 @@ function getDbPath() {
   }
   
   // 优先级 3: 兜底（基于 Plugin 安装时的 install.sh 路径）
-  return path.join(process.env.HOME, 'Desktop', 'skill相关文档', 'openclaw_flow_plugin', 'data', 'flow_ecosystem.db');
+  return path.join(process.env.HOME, 'Desktop', 'skill相关文档', 'flow-evolution-for-mind', 'data', 'flow_ecosystem.db');
 }
 
 export function registerCounterHook(api) {
@@ -54,7 +54,7 @@ export function registerCounterHook(api) {
             const coreDir = process.env.FLOW_EVOLUTION_DIR
               || (fs.existsSync(path.join(process.env.HOME, '.flow_evolution_dir'))
                 ? fs.readFileSync(path.join(process.env.HOME, '.flow_evolution_dir'), 'utf8').trim()
-                : path.join(process.env.HOME, 'Desktop', 'skill相关文档', 'openclaw_flow_plugin'));
+                : path.join(process.env.HOME, 'Desktop', 'skill相关文档', 'flow-evolution-for-mind'));
             const scriptPath = path.join(coreDir, 'adapters', 'openclaw', 'scripts', 'flow_handler.py');
             
             api.logger.info(`[flow-style] Triggering Scanner (count=${count}, per-turn mode)`);
