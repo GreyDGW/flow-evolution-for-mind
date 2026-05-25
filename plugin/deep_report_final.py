@@ -18,7 +18,19 @@ class DeepReportFinal:
 
         # 直接用 session_analyses.created_at 过滤（已通过batch_analyze保存正确时间戳）
         # 不再依赖 sessions 表的复杂过滤条件（is_system_noise等会导致过度过滤）
-        date_filter = f"""WHERE sa.created_at >= '{start_date} 00:00:00' AND sa.created_at < '{end_date} 00:00:00'"""
+        # 兼容 'YYYY-MM-DD' 或 'YYYY-MM-DD HH:MM:SS' 格式
+        start_dt = start_date.split()[0]  # 取日期部分
+        end_dt = end_date.split()[0]      # 取日期部分
+        # 如果传入的是纯日期，补上完整时间范围；如果是完整时间戳，直接用
+        if ' ' not in start_date:
+            start_ts = f"{start_dt} 00:00:00"
+        else:
+            start_ts = start_date
+        if ' ' not in end_date:
+            end_ts = f"{end_dt} 23:59:59"
+        else:
+            end_ts = end_date
+        date_filter = f"WHERE sa.created_at >= '{start_ts}' AND sa.created_at <= '{end_ts}'"
 
         stats = {}
 
@@ -141,8 +153,10 @@ class DeepReportFinal:
             ]
 
             # 趋势对比（前一天数据）
-            prev_start = (datetime.strptime(start_date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
-            prev_end = start_date
+            # 兼容多种日期格式：允许 'YYYY-MM-DD' 或 'YYYY-MM-DD HH:MM:SS'
+            dt_start = datetime.strptime(start_date.split()[0], '%Y-%m-%d')
+            prev_start = (dt_start - timedelta(days=1)).strftime('%Y-%m-%d')
+            prev_end = start_date[:10]
             c.execute(f"""
                 SELECT
                     ROUND(AVG(
